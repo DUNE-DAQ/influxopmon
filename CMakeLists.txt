@@ -11,7 +11,6 @@ find_package(logging REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(opmonlib REQUIRED)
 
-set(INFLUXOPMON_DEPENDENCIES ${CETLIB} ${CETLIB_EXCEPT} ers::ers logging::logging nlohmann_json::nlohmann_json opmonlib::opmonlib)
 
 ##############################################################################
 # Main library
@@ -21,6 +20,7 @@ daq_add_library(*.cpp LINK_LIBRARIES ${INFLUXOPMON_DEPENDENCIES})
 ##############################################################################
 # Plugins
 
+daq_add_plugin(influxOpmonService duneOpmonService LINK_LIBRARIES)
 
 ##############################################################################
 # Integration tests
