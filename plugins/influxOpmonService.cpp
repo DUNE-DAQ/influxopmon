@@ -30,22 +30,23 @@ class influxOpmonService : public dunedaq::opmonlib::OpmonService
             ressource.push_back(tmp);
         }
 
-        // FIXME: Get the DB connection string from the URI.
-        // The URI will be something like influx://db_host:db_port:db_name....
+        //std::string uri = "influx://dbod-testinfluxyd.cern.ch:8095:db1:admin:admin"
         m_host = ressource[0];
         m_port = stoi(ressource[1]);
         m_dbname = ressource[2];
         m_dbaccount = ressource[3];
         m_dbpassword = ressource[4];
 
-        //std::cout << "contacting" + host m_host;
+        
+
+        // influxdb_cpp::server_info si(m_host, m_port, .....);
+        tagSetVector.push_back(".class_name=");
     }
 
     void publish( nlohmann::json j )
     {
 
-        // influxdb_cpp::server_info si(m_host, m_port, .....);
-        tagSetVector.push_back(".class_name=");
+        std::cout << "Hello world";
 
         influxdb_cpp::server_info si(m_host, m_port, m_dbname, m_dbaccount, m_dbpassword);
         //influxdb_cpp::server_info si("dbod-testinfluxyd.cern.ch", 8095, "pyexample", "admin", "admin");
