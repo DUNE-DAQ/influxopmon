@@ -52,7 +52,7 @@ class influxOpmonService : public dunedaq::opmonlib::OpmonService
         std::string resp;
 
         jsonConverter.setInsertsVector(false, tagSetVector, timeVariableName, j);
-        insertsVector = jsonConverter.getInsertsVector();
+        std::vector<std::string> insertsVector = jsonConverter.getInsertsVector();
 
         for (int i = 0; i < insertsVector.size(); i++)
         {
