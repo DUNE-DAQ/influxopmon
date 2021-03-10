@@ -46,11 +46,13 @@ class influxOpmonService : public dunedaq::opmonlib::OpmonService
     void publish( nlohmann::json j )
     {
 
-        std::cout << "Hello world";
 
         influxdb_cpp::server_info si(m_host, m_port, m_dbname, m_dbaccount, m_dbpassword);
         //influxdb_cpp::server_info si("dbod-testinfluxyd.cern.ch", 8095, "pyexample", "admin", "admin");
         std::string resp;
+
+        influxdb_cpp::query(resp, "CREATE DATABASE mydbX", si);
+        
 
         jsonConverter.setInsertsVector(false, tagSetVector, timeVariableName, j);
         std::vector<std::string> insertsVector = jsonConverter.getInsertsVector();
