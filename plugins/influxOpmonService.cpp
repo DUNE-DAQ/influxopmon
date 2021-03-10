@@ -2,6 +2,7 @@
 #include <nlohmann/json.hpp>
 
 #include "opmonlib/OpmonService.hpp"
+#include "JsonInfluxConverter/JsonInfluxConverter.h"
 #include "influxdb.hpp"
 
 namespace dunedaq {
