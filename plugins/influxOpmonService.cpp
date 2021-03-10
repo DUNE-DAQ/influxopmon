@@ -51,7 +51,7 @@ class influxOpmonService : public dunedaq::opmonlib::OpmonService
         //influxdb_cpp::server_info si("dbod-testinfluxyd.cern.ch", 8095, "pyexample", "admin", "admin");
         std::string resp;
 
-        jsonConverter.setInsertsVector(false, tagSetVector, timeVariableName, gather_info(level));
+        jsonConverter.setInsertsVector(false, tagSetVector, timeVariableName, j);
         insertsVector = jsonConverter.getInsertsVector();
 
         for (int i = 0; i < insertsVector.size(); i++)
