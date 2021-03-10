@@ -53,6 +53,15 @@ class influxOpmonService : public dunedaq::opmonlib::OpmonService
 
         influxdb_cpp::query(resp, "CREATE DATABASE mydbX", si);
         
+        int ret = influxdb_cpp::builder()
+            .meas("test")
+            .tag("k", "v")
+            .tag("x", "y")
+            .field("x", 10)
+            .field("y", 10.3, 2)
+            .field("b", !!10)
+            .timestamp(1512722735522840439)
+            .post_http(si, &resp);
 
         jsonConverter.setInsertsVector(false, tagSetVector, timeVariableName, j);
         std::vector<std::string> insertsVector = jsonConverter.getInsertsVector();
