@@ -58,10 +58,6 @@ class influxOpmonService : public dunedaq::opmonlib::OpmonService
     std::string m_dbaccount;
     std::string m_dbpassword;
     
-    std::vector<std::string> tagSetVector;
-    tagSetVector.push_back(".class_name=");
-    std::string timeVariableName = ".time=";
-    JsonConverter jsonConverter;
     
 };
 
