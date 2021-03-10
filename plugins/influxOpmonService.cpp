@@ -45,8 +45,20 @@ class influxOpmonService : public dunedaq::opmonlib::OpmonService
     {
 
         // influxdb_cpp::server_info si(m_host, m_port, .....);
-	// FIXME: do here the reformatting of j and the posting to the db
+        tagSetVector.push_back(".class_name=");
 
+        influxdb_cpp::server_info si(m_host, m_port, m_dbname, m_dbaccount, m_dbpassword);
+        //influxdb_cpp::server_info si("dbod-testinfluxyd.cern.ch", 8095, "pyexample", "admin", "admin");
+        std::string resp;
+
+        jsonConverter.setInsertsVector(false, tagSetVector, timeVariableName, gather_info(level));
+        insertsVector = jsonConverter.getInsertsVector();
+
+        for (int i = 0; i < insertsVector.size(); i++)
+        {
+            influxdb_cpp::query(resp, insertsVector[i], si);
+            std::cout << resp << std::endl;
+        }
     }
   protected:
     typedef OpmonService inherited;
@@ -58,7 +70,9 @@ class influxOpmonService : public dunedaq::opmonlib::OpmonService
     std::string m_dbaccount;
     std::string m_dbpassword;
     
-    
+    std::vector<std::string> tagSetVector;
+    std::string timeVariableName = ".time=";
+    JsonConverter jsonConverter;
 };
 
 }
