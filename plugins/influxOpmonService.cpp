@@ -2,6 +2,7 @@
 #include <nlohmann/json.hpp>
 
 #include "opmonlib/OpmonService.hpp"
+#include "JsonInfluxConverter/JsonInfluxConverter.h"
 #include "influxdb.hpp"
 
 namespace dunedaq {
@@ -19,21 +20,52 @@ namespace dunedaq::influxopmon {
     {
     public:
         explicit influxOpmonService(std::string uri) : dunedaq::opmonlib::OpmonService(uri) {
-            // FIXME: Get the DB connection string from the URI.
-            // The URI will be something like influx://db_host:db_port:db_name....
-            m_host = "dbod-testinfluxyd.cern.ch";
-            m_port = 8095;
-            m_dbname = "db1";
+            uri = uri.substr(uri.find("/") + 2);
+            std::string tmp;
+            std::stringstream ss(uri);
+            std::vector<std::string> ressource;
+            while (getline(ss, tmp, ':'))
+            {
+                ressource.push_back(tmp);
+            }
 
-            std::cout << "Hello world";
+            //std::string uri = "influx://dbod-testinfluxyd.cern.ch:8095:db1:admin:admin"
+            m_host = ressource[0];
+            m_port = stoi(ressource[1]);
+            m_dbname = ressource[2];
+            m_dbaccount = ressource[3];
+            m_dbpassword = ressource[4];
+
+            // influxdb_cpp::server_info si(m_host, m_port, .....);
+            tagSetVector.push_back(".class_name=");
         }
 
         void publish(nlohmann::json j)
         {
+            influxdb_cpp::server_info si(m_host, m_port, m_dbname, m_dbaccount, m_dbpassword);
+            //influxdb_cpp::server_info si("dbod-testinfluxyd.cern.ch", 8095, "pyexample", "admin", "admin");
+            std::string resp;
 
-            // influxdb_cpp::server_info si(m_host, m_port, .....);
-        // FIXME: do here the reformatting of j and the posting to the db
+            influxdb_cpp::query(resp, "CREATE DATABASE mydbX", si);
 
+            int ret = influxdb_cpp::builder()
+                .meas("test")
+                .tag("k", "v")
+                .tag("x", "y")
+                .field("x", 10)
+                .field("y", 10.3, 2)
+                .field("b", !!10)
+                .timestamp(1512722735522840439)
+                .post_http(si, &resp);
+
+            jsonConverter.setInsertsVector(false, tagSetVector, timeVariableName, j);
+            std::vector<std::string> insertsVector = jsonConverter.getInsertsVector();
+
+            for (int i = 0; i < insertsVector.size(); i++)
+            {
+                influxdb_cpp::query(resp, insertsVector[i], si);
+                std::cout << resp << std::endl;
+            }
         }
     protected:
         typedef OpmonService inherited;
@@ -42,8 +74,12 @@ namespace dunedaq::influxopmon {
         std::string m_host;
         int32_t m_port;
         std::string m_dbname;
-        // FIXME: add here utility methods
+        std::string m_dbaccount;
+        std::string m_dbpassword;
 
+        std::vector<std::string> tagSetVector;
+        std::string timeVariableName = ".time=";
+        JsonConverter jsonConverter;
     };
 
 }
