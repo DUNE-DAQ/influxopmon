@@ -29,3 +29,4 @@ daq_add_plugin(influxOpmonService duneOpmonService LINK_LIBRARIES opmonlib::opmo
 ##############################################################################
 
 daq_install()
+
