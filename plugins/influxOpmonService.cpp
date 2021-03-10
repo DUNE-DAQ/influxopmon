@@ -1,4 +1,5 @@
 #include <string>
+#include <vector>
 #include <nlohmann/json.hpp>
 
 #include "opmonlib/OpmonService.hpp"
