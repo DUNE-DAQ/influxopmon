@@ -24,6 +24,8 @@ class influxOpmonService : public dunedaq::opmonlib::OpmonService
         m_host = "dbod-testinfluxyd.cern.ch";
         m_port = 8095;
         m_dbname = "db1";
+
+        std::cout << "Hello world";
     }
 
     void publish( nlohmann::json j )
