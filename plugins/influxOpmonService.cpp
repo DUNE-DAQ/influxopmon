@@ -62,8 +62,17 @@ namespace dunedaq::influxopmon {
         {
 
             // influxdb_cpp::server_info si(m_host, m_port, .....);
-        // FIXME: do here the reformatting of j and the posting to the db
-            //jsonToInfluxFunction(bool ignoreTags, std::vector<std::string> tagSetVector, std::string timeVariableName, json jsonStream)
+            // FIXME: do here the reformatting of j and the posting to the db
+            setInsertsVector(false, tagSetVector, timeVariableName, j);
+            
+            std::vector<std::string> insertsVector = jsonConverter.getInsertsVector();
+
+            for (int i = 0; i < insertsVector.size(); i++)
+            {
+                influxdb_cpp::query(resp, insertsVector[i], si);
+                std::cout << insertsVector[i] << std::endl;
+                std::cout << resp << std::endl;
+            }
         }
 
         std::string checkDataType(std::string line)
@@ -196,7 +205,7 @@ namespace dunedaq::influxopmon {
                     insertCommandField = insertCommandField.substr(0, insertCommandField.size() - 1);
 
                     vectorInserts.push_back(insertCommandTag + " " + insertCommandField + " " + time);
-                    std::cout << insertCommandTag + " " + insertCommandField + " " + time << "\n";
+                    //std::cout << insertCommandTag + " " + insertCommandField + " " + time << "\n";
 
                     insertCommandTag = "INSERT " + applicationName + ",";
                     insertCommandField = "";
@@ -250,7 +259,7 @@ namespace dunedaq::influxopmon {
 
         std::vector<std::string> tagSetVector;
         std::string timeVariableName = ".time=";
-        JsonConverter jsonConverter;
+        std::vector<std::string> insertsVector;
     };
 
 }
