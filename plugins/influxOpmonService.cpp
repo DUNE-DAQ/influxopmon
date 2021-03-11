@@ -49,8 +49,15 @@ namespace dunedaq::influxopmon {
             m_dbaccount = ressource[3];
             m_dbpassword = ressource[4];
 
-            std::cout << m_host+ " \n";
+            std::cout << m_host + " \n" + ressource[1] + " \n" + ressource[2] + " \n" ressource[3] + " \n" + ressource[4] + " \n";
 
+            influxdb_cpp::server_info si(m_host, m_port, m_dbname, m_dbaccount, m_dbpassword);
+            //influxdb_cpp::server_info si("dbod-testinfluxyd.cern.ch", 8095, "pyexample", "admin", "admin");
+            std::string resp;
+
+            influxdb_cpp::query(resp, "CREATE DATABASE mydbX", si);
+
+            std::cout << resp;
         }
 
         void publish(nlohmann::json j)
