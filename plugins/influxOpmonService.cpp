@@ -63,10 +63,11 @@ namespace dunedaq::influxopmon {
     protected:
         typedef OpmonService inherited;
     private:
-        //std::ofstream m_ofs;
         std::string m_host;
         int32_t m_port;
         std::string m_dbname;
+        std::string m_dbaccount;
+        std::string m_dbpassword;
         // FIXME: add here utility methods
 
     };
