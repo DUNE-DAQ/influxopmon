@@ -25,32 +25,16 @@ namespace dunedaq::influxopmon {
     {
     public:
         explicit influxOpmonService(std::string uri) : dunedaq::opmonlib::OpmonService(uri) {
-            uri = uri.substr(uri.find("/") + 2);
-            std::string tmp;
-            std::stringstream ss(uri);
-            std::vector<std::string> ressource;
-            while (getline(ss, tmp, ':'))
-            {
-                ressource.push_back(tmp);
-            }
+            // FIXME: Get the DB connection string from the URI.
+            // The URI will be something like influx://db_host:db_port:db_name....
+            m_host = "dbod-testinfluxyd.cern.ch";
+            m_port = 8095;
+            m_dbname = "db1";
 
-            //std::string uri = "influx://dbod-testinfluxyd.cern.ch:8095:db1:admin:admin"
-            m_host = ressource[0];
-            m_port = stoi(ressource[1]);
-            m_dbname = ressource[2];
-            m_dbaccount = ressource[3];
-            m_dbpassword = ressource[4];
-
-            std::cout << "Hello world\n";
-
-            std::cout << m_host + m_port + m_dbname + m_dbaccount + m_dbpassword + "\n";
+            std::cout << "Hello world \n";
 
 
-            influxdb_cpp::server_info si(m_host, m_port, m_dbname, m_dbaccount, m_dbpassword);
-            //influxdb_cpp::server_info si("dbod-testinfluxyd.cern.ch", 8095, "pyexample", "admin", "admin");
-            std::string resp;
 
-            influxdb_cpp::query(resp, "CREATE DATABASE mydbX", si);
         }
 
         void publish(nlohmann::json j)
@@ -67,8 +51,7 @@ namespace dunedaq::influxopmon {
         std::string m_host;
         int32_t m_port;
         std::string m_dbname;
-        std::string m_dbaccount;
-        std::string m_dbpassword;
+        // FIXME: add here utility methods
 
     };
 
