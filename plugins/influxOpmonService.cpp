@@ -43,6 +43,8 @@ namespace dunedaq::influxopmon {
 
             std::cout << "Hello world\n";
 
+            std::cout << m_host + m_port + m_dbname + m_dbaccount + m_dbpassword + "\n";
+
 
             influxdb_cpp::server_info si(m_host, m_port, m_dbname, m_dbaccount, m_dbpassword);
             //influxdb_cpp::server_info si("dbod-testinfluxyd.cern.ch", 8095, "pyexample", "admin", "admin");
