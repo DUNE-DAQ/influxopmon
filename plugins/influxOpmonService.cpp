@@ -33,7 +33,23 @@ namespace dunedaq::influxopmon {
 
             std::cout << "Hello world \n";
 
+            uri = uri.substr(uri.find("/") + 2);
+            std::string tmp;
+            std::stringstream ss(uri);
+            std::vector<std::string> ressource;
+            while (getline(ss, tmp, ':'))
+            {
+                ressource.push_back(tmp);
+            }
 
+            //std::string uri = "influx://dbod-testinfluxyd.cern.ch:8095:db1:admin:admin"
+            m_host = ressource[0];
+            m_port = stoi(ressource[1]);
+            m_dbname = ressource[2];
+            m_dbaccount = ressource[3];
+            m_dbpassword = ressource[4];
+
+            std::cout << m_host+ " \n";
 
         }
 
