@@ -49,7 +49,7 @@ namespace dunedaq::influxopmon {
 
             influxdb_cpp::server_info si(m_host, m_port, m_dbname, m_dbaccount, m_dbpassword);
             //influxdb_cpp::server_info si("dbod-testinfluxyd.cern.ch", 8095, "pyexample", "admin", "admin");
-            std::string resp;
+            
 
             influxdb_cpp::query(resp, "CREATE DATABASE mydbX", si);
 
@@ -63,9 +63,10 @@ namespace dunedaq::influxopmon {
 
             // influxdb_cpp::server_info si(m_host, m_port, .....);
             // FIXME: do here the reformatting of j and the posting to the db
+            influxdb_cpp::server_info si(m_host, m_port, m_dbname, m_dbaccount, m_dbpassword);
             setInsertsVector(false, tagSetVector, timeVariableName, j);
             
-            std::vector<std::string> insertsVector = jsonConverter.getInsertsVector();
+            std::vector<std::string> insertsVector = getInsertsVector();
 
             for (int i = 0; i < insertsVector.size(); i++)
             {
@@ -256,7 +257,7 @@ namespace dunedaq::influxopmon {
         std::string m_dbaccount;
         std::string m_dbpassword;
         // FIXME: add here utility methods
-
+        std::string resp;
         std::vector<std::string> tagSetVector;
         std::string timeVariableName = ".time=";
         std::vector<std::string> insertsVector;
