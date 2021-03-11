@@ -78,7 +78,7 @@ namespace dunedaq::influxopmon {
             
             influxdb_cpp::query(resp, "CREATE DATABASE mydbX", si);
 
-            std::cout << exec('curl - i - XPOST \'https://dbod-testinfluxyd.cern.ch:8095/write?db=mydb\' --header \'Authorization: Token admin:admin\'  --data - binary \'yann,appinfo.data.class_name="appinfo" appinfo.data.busy=false,appinfo.data.error=false,appinfo.data.state="NONE" 1615489530\'');
+            std::cout << exec("curl - i - XPOST 'https://dbod-testinfluxyd.cern.ch:8095/write?db=mydb' --header 'Authorization: Token admin:admin'  --data - binary 'yann,appinfo.data.class_name=\"appinfo\" appinfo.data.busy=false,appinfo.data.error=false,appinfo.data.state=\"NONE\" 1615489530'");
 
             tagSetVector.push_back(".class_name=");
         }
