@@ -1,22 +1,15 @@
 #include <string>
 #include <nlohmann/json.hpp>
-
 #include "opmonlib/OpmonService.hpp"
-#include "influxdb.hpp"
-
 #include <iostream>
 #include <iomanip>
 #include <fstream>
 #include <vector>
 #include <sstream>
-
-
-///////TEST EXECUTE COMMAND////////
 #include <cstdio>
 #include <memory>
 #include <stdexcept>
 #include <array>
-///////////////////////////////////
 
 
 
@@ -70,20 +63,11 @@ namespace dunedaq::influxopmon {
             m_dbaccount = ressource[3];
             m_dbpassword = ressource[4];
 
-            std::cout << m_host + " \n" + ressource[1] + " \n" + ressource[2] + " \n" + ressource[3] + " \n" + ressource[4] + " \n";
-
-    
-            
-            std::cout << exec("curl -i -XPOST 'https://dbod-testinfluxyd.cern.ch:8095/write?db=mydb' --header 'Authorization: Token admin:admin'  --data-binary 'yann,appinfo.data.class_name=\"appinfo\" appinfo.data.busy=false,appinfo.data.error=false,appinfo.data.state=\"NONE\" 1615489530'");
-
             tagSetVector.push_back(".class_name=");
         }
 
         void publish(nlohmann::json j)
         {
-
-            // influxdb_cpp::server_info si(m_host, m_port, .....);
-            // FIXME: do here the reformatting of j and the posting to the db
             setInsertsVector(false, tagSetVector, timeVariableName, j);
             insertsVector = getInsertsVector();
             
@@ -109,7 +93,7 @@ namespace dunedaq::influxopmon {
             else
             {
                 lineOriginal = lineOriginal.substr(0, lineOriginal.find("=") + 1);
-                lineOriginal = lineOriginal + "\\\""  + line + "\\\"";
+                lineOriginal = lineOriginal + "\""  + line + "\"";
             }
 
             return lineOriginal;
