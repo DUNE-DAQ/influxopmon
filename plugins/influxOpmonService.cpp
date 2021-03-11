@@ -40,7 +40,7 @@ namespace dunedaq::influxopmon {
         std::string exec(const char* cmd) {
             std::array<char, 128> buffer;
             std::string result;
-            std::unique_ptr<FILE, decltype(&_pclose)> pipe(_popen(cmd, "r"), _pclose);
+            std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
             if (!pipe) {
                 throw std::runtime_error("popen() failed!");
             }
@@ -75,10 +75,10 @@ namespace dunedaq::influxopmon {
             influxdb_cpp::server_info si(m_host, m_port, m_dbname, m_dbaccount, m_dbpassword);
             //influxdb_cpp::server_info si("dbod-testinfluxyd.cern.ch", 8095, "pyexample", "admin", "admin");
             
-
+            
             influxdb_cpp::query(resp, "CREATE DATABASE mydbX", si);
 
-            std::cout << exec("echo toto");
+            std::cout << exec('curl - i - XPOST \'https://dbod-testinfluxyd.cern.ch:8095/write?db=mydb\' --header \'Authorization: Token admin:admin\'  --data - binary \'yann,appinfo.data.class_name="appinfo" appinfo.data.busy=false,appinfo.data.error=false,appinfo.data.state="NONE" 1615489530\'');
 
             tagSetVector.push_back(".class_name=");
         }
@@ -158,7 +158,7 @@ namespace dunedaq::influxopmon {
 
             }
 
-            std::string insertCommandTag = "INSERT " + applicationName + ",";
+            std::string insertCommandTag = applicationName + ",";
             std::string insertCommandField = "";
             std::string time;
 
@@ -233,7 +233,7 @@ namespace dunedaq::influxopmon {
                     vectorInserts.push_back(insertCommandTag + " " + insertCommandField + " " + time);
                     //std::cout << insertCommandTag + " " + insertCommandField + " " + time << "\n";
 
-                    insertCommandTag = "INSERT " + applicationName + ",";
+                    insertCommandTag = applicationName + ",";
                     insertCommandField = "";
                 }
 
