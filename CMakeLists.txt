@@ -6,17 +6,17 @@ find_package(daq-cmake REQUIRED)
 daq_setup_environment()
 
 find_package(opmonlib REQUIRED)
-find_package(nlohmann_json REQUIRED)
+find_package(nlhomann REQUIRED)
 
 ##############################################################################
 # Main library
 
-daq_add_library(*.cpp LINK_LIBRARIES ${INFLUXOPMON_DEPENDENCIES} nlohmann_json::nlohmann_json)
+daq_add_library(*.cpp LINK_LIBRARIES ${INFLUXOPMON_DEPENDENCIES})
 
 ##############################################################################
 # Plugins
 
-daq_add_plugin(influxOpmonService duneOpmonService LINK_LIBRARIES influxopmon::influxopmon opmonlib::opmonlib)
+daq_add_plugin(influxOpmonService duneOpmonService LINK_LIBRARIES iopmonlib::opmonlib)
 
 ##############################################################################
 # Integration tests
