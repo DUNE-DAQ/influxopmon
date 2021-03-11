@@ -58,7 +58,7 @@ namespace dunedaq::influxopmon {
 
             //std::string uri = "influx://dbod-testinfluxyd.cern.ch:8095:db1:admin:admin"
             m_host = ressource[0];
-            m_port = stoi(ressource[1]);
+            m_port = ressource[1];
             m_dbname = ressource[2];
             m_dbaccount = ressource[3];
             m_dbpassword = ressource[4];
@@ -256,7 +256,7 @@ namespace dunedaq::influxopmon {
         typedef OpmonService inherited;
     private:
         std::string m_host;
-        int32_t m_port;
+        std::string m_port;
         std::string m_dbname;
         std::string m_dbaccount;
         std::string m_dbpassword;
