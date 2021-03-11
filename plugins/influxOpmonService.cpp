@@ -85,7 +85,7 @@ namespace dunedaq::influxopmon {
             // influxdb_cpp::server_info si(m_host, m_port, .....);
             // FIXME: do here the reformatting of j and the posting to the db
             setInsertsVector(false, tagSetVector, timeVariableName, j);
-            insertsVector = getInsertsVector()
+            insertsVector = getInsertsVector();
             
             for (int i = 0; i < insertsVector.size(); i++)
             {
@@ -109,7 +109,7 @@ namespace dunedaq::influxopmon {
             else
             {
                 lineOriginal = lineOriginal.substr(0, lineOriginal.find("=") + 1);
-                lineOriginal = lineOriginal + '\\"' + line + '\\"';
+                lineOriginal = lineOriginal + "\\\""  + line + "\\\"";
             }
 
             return lineOriginal;
