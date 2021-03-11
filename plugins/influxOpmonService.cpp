@@ -72,12 +72,8 @@ namespace dunedaq::influxopmon {
 
             std::cout << m_host + " \n" + ressource[1] + " \n" + ressource[2] + " \n" + ressource[3] + " \n" + ressource[4] + " \n";
 
-            influxdb_cpp::server_info si(m_host, m_port, m_dbname, m_dbaccount, m_dbpassword);
-            //influxdb_cpp::server_info si("dbod-testinfluxyd.cern.ch", 8095, "pyexample", "admin", "admin");
+    
             
-            
-            influxdb_cpp::query(resp, "CREATE DATABASE mydbX", si);
-
             std::cout << exec("curl -i -XPOST 'https://dbod-testinfluxyd.cern.ch:8095/write?db=mydb' --header 'Authorization: Token admin:admin'  --data-binary 'yann,appinfo.data.class_name=\"appinfo\" appinfo.data.busy=false,appinfo.data.error=false,appinfo.data.state=\"NONE\" 1615489530'");
 
             tagSetVector.push_back(".class_name=");
@@ -88,15 +84,15 @@ namespace dunedaq::influxopmon {
 
             // influxdb_cpp::server_info si(m_host, m_port, .....);
             // FIXME: do here the reformatting of j and the posting to the db
-            influxdb_cpp::server_info si(m_host, m_port, m_dbname, m_dbaccount, m_dbpassword);
             setInsertsVector(false, tagSetVector, timeVariableName, j);
+            insertsVector = getInsertsVector()
             
-            std::vector<std::string> insertsVector = getInsertsVector();
-
             for (int i = 0; i < insertsVector.size(); i++)
             {
                 std::cout << insertsVector[i];
-                std::cout << exec("curl -i -XPOST 'https://dbod-testinfluxyd.cern.ch:8095/write?db=mydb' --header 'Authorization: Token admin:admin'  --data-binary '"+ insertsVector[i] +"'");
+                querry = "curl -i -XPOST 'https://dbod-testinfluxyd.cern.ch:8095/write?db=mydb' --header 'Authorization: Token admin:admin'  --data-binary '" + insertsVector[i] + "'";
+                charPointer = querry.c_str();
+                std::cout << exec(charPointer);
             }
         }
 
@@ -281,10 +277,13 @@ namespace dunedaq::influxopmon {
         std::string m_dbaccount;
         std::string m_dbpassword;
         // FIXME: add here utility methods
-        std::string resp;
+        
         std::vector<std::string> tagSetVector;
         std::string timeVariableName = ".time=";
         std::vector<std::string> insertsVector;
+        
+        std::string querry;
+        const char* charPointer;
     };
 
 }
