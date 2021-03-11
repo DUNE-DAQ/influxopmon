@@ -78,7 +78,7 @@ namespace dunedaq::influxopmon {
             
             influxdb_cpp::query(resp, "CREATE DATABASE mydbX", si);
 
-            std::cout << exec("curl - i - XPOST 'https://dbod-testinfluxyd.cern.ch:8095/write?db=mydb' --header 'Authorization: Token admin:admin'  --data - binary 'yann,appinfo.data.class_name=\"appinfo\" appinfo.data.busy=false,appinfo.data.error=false,appinfo.data.state=\"NONE\" 1615489530'");
+            std::cout << exec("curl -i -XPOST 'https://dbod-testinfluxyd.cern.ch:8095/write?db=mydb' --header 'Authorization: Token admin:admin'  --data-binary 'yann,appinfo.data.class_name=\"appinfo\" appinfo.data.busy=false,appinfo.data.error=false,appinfo.data.state=\"NONE\" 1615489530'");
 
             tagSetVector.push_back(".class_name=");
         }
@@ -95,9 +95,8 @@ namespace dunedaq::influxopmon {
 
             for (int i = 0; i < insertsVector.size(); i++)
             {
-                influxdb_cpp::query(resp, insertsVector[i], si);
-                std::cout << insertsVector[i] << std::endl;
-                std::cout << resp << std::endl;
+                std::cout << insertsVector[i];
+                std::cout << exec("curl -i -XPOST 'https://dbod-testinfluxyd.cern.ch:8095/write?db=mydb' --header 'Authorization: Token admin:admin'  --data-binary '"+ insertsVector[i] +"'");
             }
         }
 
@@ -114,7 +113,7 @@ namespace dunedaq::influxopmon {
             else
             {
                 lineOriginal = lineOriginal.substr(0, lineOriginal.find("=") + 1);
-                lineOriginal = lineOriginal + '"' + line + '"';
+                lineOriginal = lineOriginal + '\\"' + line + '\\"';
             }
 
             return lineOriginal;
