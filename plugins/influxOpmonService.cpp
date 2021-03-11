@@ -10,6 +10,8 @@
 #include <vector>
 #include <sstream>
 
+using json = nlohmann::json;
+
 namespace dunedaq {
 
     ERS_DECLARE_ISSUE(influxopmon, CannotPostToDB,
