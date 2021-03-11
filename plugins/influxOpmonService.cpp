@@ -10,6 +10,16 @@
 #include <vector>
 #include <sstream>
 
+
+///////TEST EXECUTE COMMAND////////
+#include <cstdio>
+#include <memory>
+#include <stdexcept>
+#include <array>
+///////////////////////////////////
+
+
+
 using json = nlohmann::json;
 
 namespace dunedaq {
@@ -26,6 +36,21 @@ namespace dunedaq::influxopmon {
     class influxOpmonService : public dunedaq::opmonlib::OpmonService
     {
     public:
+
+        std::string exec(const char* cmd) {
+            std::array<char, 128> buffer;
+            std::string result;
+            std::unique_ptr<FILE, decltype(&_pclose)> pipe(_popen(cmd, "r"), _pclose);
+            if (!pipe) {
+                throw std::runtime_error("popen() failed!");
+            }
+            while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+                result += buffer.data();
+            }
+            return result;
+        }
+
+
         explicit influxOpmonService(std::string uri) : dunedaq::opmonlib::OpmonService(uri) {
             // FIXME: Get the DB connection string from the URI.
             // The URI will be something like influx://db_host:db_port:db_name....
@@ -53,7 +78,7 @@ namespace dunedaq::influxopmon {
 
             influxdb_cpp::query(resp, "CREATE DATABASE mydbX", si);
 
-            std::cout << resp;
+            std::cout << exec("echo toto");
 
             tagSetVector.push_back(".class_name=");
         }
