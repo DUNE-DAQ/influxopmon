@@ -54,6 +54,8 @@ namespace dunedaq::influxopmon {
             influxdb_cpp::query(resp, "CREATE DATABASE mydbX", si);
 
             std::cout << resp;
+
+            tagSetVector.push_back(".class_name=");
         }
 
         void publish(nlohmann::json j)
@@ -61,7 +63,7 @@ namespace dunedaq::influxopmon {
 
             // influxdb_cpp::server_info si(m_host, m_port, .....);
         // FIXME: do here the reformatting of j and the posting to the db
-
+            //jsonToInfluxFunction(bool ignoreTags, std::vector<std::string> tagSetVector, std::string timeVariableName, json jsonStream)
         }
 
         std::string checkDataType(std::string line)
@@ -205,6 +207,36 @@ namespace dunedaq::influxopmon {
             return vectorInserts;
         }
 
+        void setInsertsVector(bool ignoreTags, std::vector<std::string> tagSetVector, std::string timeVariableName, nlohmann::json jsonStream)
+        {
+            try
+            {
+                insertsVector = jsonToInfluxFunction(ignoreTags, tagSetVector, timeVariableName, jsonStream);
+            }
+            catch (const std::runtime_error& re)
+            {
+                // speciffic handling for runtime_error
+                std::cerr << "Runtime error: " << re.what() << std::endl;
+            }
+            catch (const std::exception& ex)
+            {
+                // extending std::exception, except
+                std::cerr << "Error occurred: " << ex.what() << std::endl;
+            }
+            catch (...)
+            {
+                std::cerr << "Unknown failure occurred. Possible memory corruption" << std::endl;
+            }
+        }
+        /**
+         * Get a converted vector, to set call setInsertsVector.
+         *
+         * @return Vector of string formated influxDB INSERT querries.
+         */
+        std::vector<std::string> getInsertsVector()
+        {
+            return insertsVector;
+        }
 
     protected:
         typedef OpmonService inherited;
@@ -216,6 +248,9 @@ namespace dunedaq::influxopmon {
         std::string m_dbpassword;
         // FIXME: add here utility methods
 
+        std::vector<std::string> tagSetVector;
+        std::string timeVariableName = ".time=";
+        JsonConverter jsonConverter;
     };
 
 }
