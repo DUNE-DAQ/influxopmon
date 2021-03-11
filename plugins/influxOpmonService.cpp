@@ -4,6 +4,13 @@
 #include "opmonlib/OpmonService.hpp"
 #include "influxdb.hpp"
 
+
+#include <iostream>
+#include <iomanip>
+#include <fstream>
+#include <vector>
+#include <sstream>
+
 namespace dunedaq {
 
     ERS_DECLARE_ISSUE(influxopmon, CannotPostToDB,
