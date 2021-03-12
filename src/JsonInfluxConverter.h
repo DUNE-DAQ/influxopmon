@@ -58,6 +58,10 @@ class JsonConverter
         {
             return insertsVector;
         }
+        void HW(std::string hw)
+        {
+            std::cout << hw;
+        }
 };
 
 #endif

@@ -67,16 +67,21 @@ namespace dunedaq::influxopmon {
 
         void publish(nlohmann::json j)
         {
+
+            jsonConverter.HW("Hello world");
             /*
             jsonConverter.setInsertsVector(false, tagSetVector, timeVariableName, j.flatten().dump());
             insertsVector = jsonConverter.getInsertsVector();
-
+            
+            
+            
             for (unsigned long int i = 0; i < insertsVector.size(); i++)
             {
                 std::cout << insertsVector[i];
                 querry = "curl -i -XPOST 'https://" + m_host + ":" + m_port + "/write?db=" + m_dbname + "' --header 'Authorization: Token " + m_dbaccount + ":" + m_dbpassword + "'  --data-binary '" + insertsVector[i] + "'";
                 charPointer = querry.c_str();
                 std::cout << exec(charPointer);
+                
             }
             */
         }
