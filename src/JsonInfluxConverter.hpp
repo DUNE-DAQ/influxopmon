@@ -196,11 +196,6 @@ class JsonConverter
          *
          * @return Vector of string formated influxDB INSERT querries.
          */
-        std::vector<std::string> getInsertsVector()
-        {
-            std::cout << "Hello getInsertsVector \n";
-            return insertsVector;
-        }
         std::string getSetInsertsVector()
         {
             return exec(const char* cmd);
