@@ -1,4 +1,7 @@
+#ifndef INFLUXOPMON_INCLUDE_INFLUXOPMON_JSONINFLUXCONVERTER_H_
+#define INFLUXOPMON_INCLUDE_INFLUXOPMON_JSONINFLUXCONVERTER_H_
 
+#include <algorithm>
 #include <iostream>
 #include <iomanip>
 #include <iostream>
@@ -56,3 +59,5 @@ class JsonConverter
             return insertsVector;
         }
 };
+
+#endif
