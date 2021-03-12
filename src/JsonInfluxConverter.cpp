@@ -32,7 +32,6 @@ std::vector<std::string> JsonConverter::jsonToInfluxFunction(bool ignoreTags, st
     jsonFlattenedString = jsonFlattenedString.substr(1, jsonFlattenedString.size() - 2);
     std::vector<std::string> vectorItems;
     std::stringstream data(jsonFlattenedString);
-    int numOfCharacters;
     std::string applicationName;
 
     bool classdefined = false;
@@ -44,7 +43,6 @@ std::vector<std::string> JsonConverter::jsonToInfluxFunction(bool ignoreTags, st
 
         //Find delimiter between position and data and count its position
         std::string::size_type pos = jsonFlattenedString.find(":");
-        int numOfCharacters = static_cast<int>(pos);
 
         //erase characters before separator
         jsonFlattenedString = jsonFlattenedString.substr(1);
@@ -74,7 +72,7 @@ std::vector<std::string> JsonConverter::jsonToInfluxFunction(bool ignoreTags, st
     bool isTag = false;
 
     //Shaping to InfluxDB 
-    for (int i = 0; i < vectorItems.size(); i++)
+    for (unsigned long int i = 0; i < vectorItems.size(); i++)
     {
         //is the time variable 
         found = vectorItems[i].find(timeVariableName);
@@ -83,7 +81,7 @@ std::vector<std::string> JsonConverter::jsonToInfluxFunction(bool ignoreTags, st
             //if className should be ignored then do not add any tag that has this description
             if (ignoreTags)
             {
-                for (int j = 0; j < tagSetVector.size(); j++)
+                for (unsigned long int j = 0; j < tagSetVector.size(); j++)
                 {
                     if (vectorItems[i].find(tagSetVector[j]) != std::string::npos)
                     {
@@ -102,7 +100,7 @@ std::vector<std::string> JsonConverter::jsonToInfluxFunction(bool ignoreTags, st
             else
             {
                 //if labelled as the tag, goes in the tag variable
-                for (int j = 0; j < tagSetVector.size(); j++)
+                for (unsigned long int j = 0; j < tagSetVector.size(); j++)
                 {
                     if (vectorItems[i].find(tagSetVector[j]) != std::string::npos)
                     {
