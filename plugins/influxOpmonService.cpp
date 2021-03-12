@@ -70,26 +70,12 @@ namespace dunedaq::influxopmon {
             for (unsigned long int i = 0; i < insertsVector.size(); i++)
             {
                 std::cout << insertsVector[i];
-                querry = querry + insertsVector[i] + "\n" ;
-                
-                
+                querry = querry + insertsVector[i] + "\n" ;              
             }
-
-            /*Test for bulk sending
-            for (unsigned long int i = 0; i < 5; i++)
-            {
-                std::cout << insertsVector[0];
-                querry = querry + insertsVector[0] + std::to_string(i) + "\n";
-
-
-            }
-            */
-
             querry = querry + "'";
 
             charPointer = querry.c_str();
-            std::cout << commandExecution.getSetInsertsVector(charPointer);
-            
+            std::cout << jsonConverter.getSetInsertsVector(charPointer);
         }
 
     protected:
@@ -109,7 +95,6 @@ namespace dunedaq::influxopmon {
         std::string querry;
         const char* charPointer;
         JsonConverter jsonConverter;
-        CommandExecution commandExecution;
 
     };
 
