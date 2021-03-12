@@ -85,7 +85,6 @@ namespace dunedaq::influxopmon {
             std::string lineOriginal = line;
             line = line.substr(line.find("=") + 1);
 
-
             if ((line.find_first_not_of("0123456789") == std::string::npos) || line == "true" || line == "false")
             {
                 lineOriginal;
