@@ -41,9 +41,6 @@ std::vector<std::string> JsonConverter::jsonToInfluxFunction(bool ignoreTags, st
         //Breaks the string to array
         jsonFlattenedString.erase(std::remove(jsonFlattenedString.begin(), jsonFlattenedString.end(), '"'), jsonFlattenedString.end());
 
-        //Find delimiter between position and data and count its position
-        std::string::size_type pos = jsonFlattenedString.find(":");
-
         //erase characters before separator
         jsonFlattenedString = jsonFlattenedString.substr(1);
         std::replace(jsonFlattenedString.begin(), jsonFlattenedString.end(), '/', '.');
