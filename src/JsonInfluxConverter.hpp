@@ -32,7 +32,7 @@ class JsonConverter
 
             return lineOriginal;
         }
-        std::vector<std::string> JsonConverter::jsonToInfluxFunction(bool ignoreTags, std::vector<std::string> tagSetVector, std::string timeVariableName, std::string jsonFlattenedString)
+        std::vector<std::string> jsonToInfluxFunction(bool ignoreTags, std::vector<std::string> tagSetVector, std::string timeVariableName, std::string jsonFlattenedString)
         {
             std::cout << "Hello jsonToInfluxFunction 1 \n";
             //flatten json, convert to string the json, then breaks the string into an array
