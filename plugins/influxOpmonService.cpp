@@ -67,7 +67,7 @@ namespace dunedaq::influxopmon {
 
         void publish(nlohmann::json j)
         {
-            jsonConverter.setInsertsVector(false, tagSetVector, timeVariableName, j);
+            jsonConverter.setInsertsVector(false, tagSetVector, timeVariableName, j.flatten().dump());
             insertsVector = jsonConverter.getInsertsVector();
 
             for (int i = 0; i < insertsVector.size(); i++)
