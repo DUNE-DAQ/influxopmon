@@ -10,7 +10,7 @@
 #include <memory>
 #include <stdexcept>
 #include <array>
-#include "JsonInfluxConverter.h"
+#include "JsonInfluxConverter.hpp"
 
 
 
