@@ -15,7 +15,7 @@ class JsonConverter
 
 	private: 
         std::string checkDataType(std::string line);
-        std::vector<std::string> jsonToInfluxFunction(bool ignoreTags, std::vector<std::string> tagSetVector, std::string timeVariableName, nlohmann::json jsonStream);
+        std::vector<std::string> jsonToInfluxFunction(bool ignoreTags, std::vector<std::string> tagSetVector, std::string timeVariableName, std::string jsonFlattenedString);
 	public:
         /**
          * Convert a nlohmann::json object to an influxDB INSERT string.
@@ -27,11 +27,11 @@ class JsonConverter
          *
          * @return Void, to get call getInsertsVector
          */
-        void setInsertsVector(bool ignoreTags, std::vector<std::string> tagSetVector, std::string timeVariableName, nlohmann::json jsonStream)
+        void setInsertsVector(bool ignoreTags, std::vector<std::string> tagSetVector, std::string timeVariableName, std::string jsonFlattenedString)
         {
             try
             {
-                insertsVector = jsonToInfluxFunction(ignoreTags, tagSetVector, timeVariableName, jsonStream);
+                insertsVector = jsonToInfluxFunction(ignoreTags, tagSetVector, timeVariableName, jsonFlattenedString);
             }
             catch (const std::runtime_error& re)
             {
