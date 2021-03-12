@@ -34,7 +34,6 @@ class JsonConverter
         }
         std::vector<std::string> jsonToInfluxFunction(bool ignoreTags, std::vector<std::string> tagSetVector, std::string timeVariableName, std::string jsonFlattenedString)
         {
-            std::cout << "Hello jsonToInfluxFunction 1 \n";
             //flatten json, convert to string the json, then breaks the string into an array
             //std::string jsonFlattenedString = jsonStream.flatten().dump();
             //remove first and last characters as they are {}
@@ -45,7 +44,6 @@ class JsonConverter
 
             bool classdefined = false;
 
-            std::cout << "Hello jsonToInfluxFunction 2 \n";
 
             while (std::getline(data, jsonFlattenedString, ','))
             {
