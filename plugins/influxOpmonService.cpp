@@ -1,5 +1,3 @@
-#ifndef INFLUXOPMON_INCLUDE_INFLUXOPMON_JSONINFLUXCONVERTER_H_
-#define INFLUXOPMON_INCLUDE_INFLUXOPMON_JSONINFLUXCONVERTER_H_
 
 #include <string>
 #include <nlohmann/json.hpp>
@@ -109,5 +107,3 @@ extern "C" {
     }
 }
 
-
-#endif
