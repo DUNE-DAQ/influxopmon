@@ -1,6 +1,5 @@
 #include "JsonInfluxConverter.h"
 
-using json = nlohmann::json;
 
 std::string JsonConverter::checkDataType(std::string line)
 {
