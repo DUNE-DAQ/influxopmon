@@ -67,13 +67,11 @@ namespace dunedaq::influxopmon {
 
         void publish(nlohmann::json j)
         {
-
-            jsonConverter.HW("Hello world");
-            /*
+            
             jsonConverter.setInsertsVector(false, tagSetVector, timeVariableName, j.flatten().dump());
             insertsVector = jsonConverter.getInsertsVector();
             
-            
+            /*
             
             for (unsigned long int i = 0; i < insertsVector.size(); i++)
             {
@@ -101,7 +99,7 @@ namespace dunedaq::influxopmon {
         
         std::string querry;
         const char* charPointer;
-        //JsonConverter jsonConverter;
+        JsonConverter jsonConverter;
 
     };
 
