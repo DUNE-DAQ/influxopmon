@@ -145,18 +145,6 @@ class JsonConverter
 
             return vectorInserts;
         }
-        std::string exec(const char* cmd) {
-            std::array<char, 128> buffer;
-            std::string result;
-            std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
-            if (!pipe) {
-                throw std::runtime_error("popen() failed!");
-            }
-            while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
-                result += buffer.data();
-            }
-            return result;
-        }
 	public:
         /**
          * Convert a nlohmann::json object to an influxDB INSERT string.
@@ -196,10 +184,12 @@ class JsonConverter
          *
          * @return Vector of string formated influxDB INSERT querries.
          */
-        std::string getSetInsertsVector()
+        std::vector<std::string> getInsertsVector()
         {
-            return exec(const char* cmd);
+            std::cout << "Hello getInsertsVector \n";
+            return insertsVector;
         }
+
 };
 
 #endif

@@ -30,6 +30,21 @@ namespace dunedaq::influxopmon {
     class influxOpmonService : public dunedaq::opmonlib::OpmonService
     {
     public:
+
+        std::string executionCommand(const char* cmd) {
+            std::array<char, 128> buffer;
+            std::string result;
+            std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
+            if (!pipe) {
+                throw std::runtime_error("popen() failed!");
+            }
+            while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+                result += buffer.data();
+            }
+            return result;
+        }
+
+
         explicit influxOpmonService(std::string uri) : dunedaq::opmonlib::OpmonService(uri) {
             uri = uri.substr(uri.find("/") + 2);
             std::string tmp;
@@ -53,8 +68,6 @@ namespace dunedaq::influxopmon {
             {
                 tagSetVector.push_back(ressource[i]);
             }
-          
-            
         }
 
         void publish(nlohmann::json j)
@@ -69,12 +82,15 @@ namespace dunedaq::influxopmon {
             for (unsigned long int i = 0; i < insertsVector.size(); i++)
             {
                 std::cout << insertsVector[i];
-                querry = querry + insertsVector[i] + "\n" ;              
+                querry = querry + insertsVector[i] + "\n" ;
+                
+                
             }
+
             querry = querry + "'";
 
             charPointer = querry.c_str();
-            std::cout << jsonConverter.getSetInsertsVector(charPointer);
+            std::cout << executionCommand(charPointer);
         }
 
     protected:
