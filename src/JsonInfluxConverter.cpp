@@ -1,11 +1,9 @@
 #include "JsonInfluxConverter.h"
 
-
 std::string JsonConverter::checkDataType(std::string line)
 {
     std::string lineOriginal = line;
     line = line.substr(line.find("=") + 1);
-
 
     if ((line.find_first_not_of("0123456789") == std::string::npos) || line == "true" || line == "false")
     {
@@ -24,8 +22,6 @@ std::string JsonConverter::checkDataType(std::string line)
 
 std::vector<std::string> JsonConverter::jsonToInfluxFunction(bool ignoreTags, std::vector<std::string> tagSetVector, std::string timeVariableName, std::string jsonFlattenedString)
 {
-
-
     //flatten json, convert to string the json, then breaks the string into an array
     //std::string jsonFlattenedString = jsonStream.flatten().dump();
     //remove first and last characters as they are {}

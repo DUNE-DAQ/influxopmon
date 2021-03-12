@@ -1,4 +1,3 @@
-
 #include <string>
 #include <nlohmann/json.hpp>
 #include "opmonlib/OpmonService.hpp"
@@ -68,6 +67,7 @@ namespace dunedaq::influxopmon {
 
         void publish(nlohmann::json j)
         {
+            /*
             jsonConverter.setInsertsVector(false, tagSetVector, timeVariableName, j.flatten().dump());
             insertsVector = jsonConverter.getInsertsVector();
 
@@ -78,6 +78,7 @@ namespace dunedaq::influxopmon {
                 charPointer = querry.c_str();
                 std::cout << exec(charPointer);
             }
+            */
         }
 
     protected:
@@ -95,7 +96,7 @@ namespace dunedaq::influxopmon {
         
         std::string querry;
         const char* charPointer;
-        JsonConverter jsonConverter;
+        //JsonConverter jsonConverter;
 
     };
 
