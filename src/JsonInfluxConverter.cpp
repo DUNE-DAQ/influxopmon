@@ -6,7 +6,7 @@ std::string JsonConverter::checkDataType(std::string line)
 {
     std::string lineOriginal = line;
     line = line.substr(line.find("=") + 1);
-    
+
 
     if ((line.find_first_not_of("0123456789") == std::string::npos) || line == "true" || line == "false")
     {
@@ -14,8 +14,8 @@ std::string JsonConverter::checkDataType(std::string line)
     }
     else
     {
-        lineOriginal = lineOriginal.substr(0, lineOriginal.find("=")+1);
-        lineOriginal = lineOriginal+ '"' + line + '"';
+        lineOriginal = lineOriginal.substr(0, lineOriginal.find("=") + 1);
+        lineOriginal = lineOriginal + "\"" + line + "\"";
     }
 
     return lineOriginal;
@@ -25,7 +25,7 @@ std::string JsonConverter::checkDataType(std::string line)
 
 std::vector<std::string> JsonConverter::jsonToInfluxFunction(bool ignoreTags, std::vector<std::string> tagSetVector, std::string timeVariableName, json jsonStream)
 {
-    
+
 
     //flatten json, convert to string the json, then breaks the string into an array
     std::string jsonFlattenedString = jsonStream.flatten().dump();
@@ -61,7 +61,7 @@ std::vector<std::string> JsonConverter::jsonToInfluxFunction(bool ignoreTags, st
 
     }
 
-    std::string insertCommandTag = "INSERT " + applicationName + ",";
+    std::string insertCommandTag = applicationName + ",";
     std::string insertCommandField = "";
     std::string time;
 
@@ -97,7 +97,7 @@ std::vector<std::string> JsonConverter::jsonToInfluxFunction(bool ignoreTags, st
                 {
                     insertCommandField = insertCommandField + checkDataType(vectorItems[i]) + ",";
                 }
-                
+
                 isTag = false;
             }
             else
@@ -121,10 +121,8 @@ std::vector<std::string> JsonConverter::jsonToInfluxFunction(bool ignoreTags, st
                     insertCommandTag = insertCommandTag + checkDataType(vectorItems[i]) + ",";
                 }
                 isTag = false;
-
-                
             }
-            
+
         }
         else
         {
@@ -134,13 +132,16 @@ std::vector<std::string> JsonConverter::jsonToInfluxFunction(bool ignoreTags, st
             insertCommandField = insertCommandField.substr(0, insertCommandField.size() - 1);
 
             vectorInserts.push_back(insertCommandTag + " " + insertCommandField + " " + time);
-            std::cout << insertCommandTag + " " + insertCommandField + " " + time << "\n";
-            
-            insertCommandTag = "INSERT " + applicationName + ",";
+            //std::cout << insertCommandTag + " " + insertCommandField + " " + time << "\n";
+
+            insertCommandTag = applicationName + ",";
             insertCommandField = "";
         }
 
     }
+
+    return vectorInserts;
+}
 
     return vectorInserts;
 }

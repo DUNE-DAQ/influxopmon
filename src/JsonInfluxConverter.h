@@ -50,23 +50,6 @@ class JsonConverter
             }
         }
         /**
-         * Convert a Json file to an influxDB INSERT string.
-         *
-         * @param   Param 1 if true, the tags are not added to the querry.
-         *          Param 2 is a vector of key-words delimiting tags
-         *          Param 3 is the key word delimiting the timestamp
-         *          Param 4 is the path to the .json file
-         *
-         * @return Void, to get call getInsertsVector
-         */
-        void setInsertsVector(bool ignoreTags, std::vector<std::string> tagSetVector, std::string timeVariableName, std::string fileName)
-        {
-            std::ifstream filestream(fileName);
-            nlohmann::json jsonStream;
-            filestream >> jsonStream;
-            jsonToInfluxFunction(ignoreTags, tagSetVector, timeVariableName, jsonStream);
-        }
-        /**
          * Get a converted vector, to set call setInsertsVector.
          *
          * @return Vector of string formated influxDB INSERT querries.
