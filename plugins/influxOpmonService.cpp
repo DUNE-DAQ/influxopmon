@@ -71,7 +71,16 @@ namespace dunedaq::influxopmon {
             setInsertsVector(false, tagSetVector, timeVariableName, j);
             insertsVector = getInsertsVector();
             
+<<<<<<< Updated upstream
             for (int i = 0; i < insertsVector.size(); i++)
+=======
+            jsonConverter.setInsertsVector(false, tagSetVector, m_delimiter, j.flatten().dump());
+            insertsVector = jsonConverter.getInsertsVector();
+            
+            querry = "curl -i -XPOST '"+ m_postProtocol +"://" + m_host + ":" + m_port + "/write?db=" + m_dbname + "' --header 'Authorization: Token " + m_dbaccount + ":" + m_dbpassword + "'  --data-binary '";
+            
+            for (unsigned long int i = 0; i < insertsVector.size(); i++)
+>>>>>>> Stashed changes
             {
                 std::cout << insertsVector[i];
                 querry = "curl -i -XPOST 'https://" + m_host + ":" + m_port + "/write?db=" + m_dbname + "' --header 'Authorization: Token " + m_dbaccount + ":" + m_dbpassword + "'  --data-binary '" + insertsVector[i] + "'";
@@ -266,6 +275,10 @@ namespace dunedaq::influxopmon {
         
         std::string querry;
         const char* charPointer;
+<<<<<<< Updated upstream
+=======
+        JsonConverter jsonConverter;
+>>>>>>> Stashed changes
     };
 
 }
