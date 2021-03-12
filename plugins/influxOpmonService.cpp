@@ -73,6 +73,7 @@ namespace dunedaq::influxopmon {
             
             
             querry = "curl -i -XPOST 'https://" + m_host + ":" + m_port + "/write?db=" + m_dbname + "' --header 'Authorization: Token " + m_dbaccount + ":" + m_dbpassword + "'  --data-binary '";
+            
             for (unsigned long int i = 0; i < insertsVector.size(); i++)
             {
                 std::cout << insertsVector[i];
@@ -80,6 +81,17 @@ namespace dunedaq::influxopmon {
                 
                 
             }
+
+            /*Test for bulk sending
+            for (unsigned long int i = 0; i < 5; i++)
+            {
+                std::cout << insertsVector[0];
+                querry = querry + insertsVector[0] + std::to_string(i) + "\n";
+
+
+            }
+            */
+
             querry = querry + "'";
 
             charPointer = querry.c_str();
