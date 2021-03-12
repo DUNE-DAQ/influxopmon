@@ -83,8 +83,6 @@ namespace dunedaq::influxopmon {
             {
                 std::cout << insertsVector[i];
                 querry = querry + insertsVector[i] + "\n" ;
-                
-                
             }
 
             querry = querry + "'";
