@@ -158,8 +158,6 @@ class JsonConverter
          */
         void setInsertsVector(bool ignoreTags, std::vector<std::string> tagSetVector, std::string timeVariableName, std::string jsonFlattenedString)
         {
-            std::cout << "Hello setInsertsVector \n";
-            
             try
             {
                 insertsVector = jsonToInfluxFunction(ignoreTags, tagSetVector, timeVariableName, jsonFlattenedString);
@@ -186,7 +184,6 @@ class JsonConverter
          */
         std::vector<std::string> getInsertsVector()
         {
-            std::cout << "Hello getInsertsVector \n";
             return insertsVector;
         }
 
