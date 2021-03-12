@@ -31,7 +31,7 @@ class JsonConverter
         void setInsertsVector(bool ignoreTags, std::vector<std::string> tagSetVector, std::string timeVariableName, std::string jsonFlattenedString)
         {
             std::cout << "Hello setInsertsVector \n";
-            /*
+            
             try
             {
                 insertsVector = jsonToInfluxFunction(ignoreTags, tagSetVector, timeVariableName, jsonFlattenedString);
@@ -49,7 +49,7 @@ class JsonConverter
             catch (...)
             {
                 std::cerr << "Unknown failure occurred. Possible memory corruption" << std::endl;
-            }*/
+            }
         }
         /**
          * Get a converted vector, to set call setInsertsVector.
