@@ -9,7 +9,7 @@ std::string JsonConverter::checkDataType(std::string line)
 
     if ((line.find_first_not_of("0123456789") == std::string::npos) || line == "true" || line == "false")
     {
-        lineOriginal;
+        return lineOriginal;
     }
     else
     {
@@ -141,7 +141,3 @@ std::vector<std::string> JsonConverter::jsonToInfluxFunction(bool ignoreTags, st
 
     return vectorInserts;
 }
-
-    return vectorInserts;
-}
-
