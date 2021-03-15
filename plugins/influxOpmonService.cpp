@@ -43,7 +43,9 @@ namespace dunedaq::influxopmon {
             }
             return result;
         }
-
+        void executionCommandSilent(const char* cmd) {
+            system(cmd);
+        }
 
         explicit influxOpmonService(std::string uri) : dunedaq::opmonlib::OpmonService(uri) {
             uri = uri.substr(uri.find("/") + 2);
@@ -88,7 +90,11 @@ namespace dunedaq::influxopmon {
             querry = querry + "'";
 
             charPointer = querry.c_str();
+<<<<<<< Updated upstream
             executionCommand(charPointer);
+=======
+            executionCommandSilent(charPointer);
+>>>>>>> Stashed changes
             //std::cout << executionCommand(charPointer);
         }
 
