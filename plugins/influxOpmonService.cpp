@@ -81,7 +81,7 @@ namespace dunedaq::influxopmon {
             
             for (unsigned long int i = 0; i < insertsVector.size(); i++)
             {
-                std::cout << insertsVector[i];
+                std::cout << insertsVector[i] + "\n" ;
                 querry = querry + insertsVector[i] + "\n" ;
             }
 
