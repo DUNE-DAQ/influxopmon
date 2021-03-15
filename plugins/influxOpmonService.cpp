@@ -107,7 +107,7 @@ namespace dunedaq::influxopmon {
         
         std::string querry;
         const char* charPointer;
-        JsonConverter jsonConverter;
+        influxopmon::JsonConverter jsonConverter;
 
     };
 

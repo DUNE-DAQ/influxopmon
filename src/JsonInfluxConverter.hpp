@@ -10,11 +10,14 @@
 #include <vector>
 #include <sstream>
 
-class JsonConverter
-{
-    std::vector<std::string> insertsVector;
 
-	private: 
+namespace dunedaq::influxopmon
+{
+    class JsonConverter
+    {
+        std::vector<std::string> insertsVector;
+
+    private:
         std::string checkDataType(std::string line)
         {
             std::string lineOriginal = line;
@@ -32,6 +35,20 @@ class JsonConverter
 
             return lineOriginal;
         }
+
+        std::string convertTimeToNS(std::string time)
+        {
+            long unsigned int stringLenNS = 19;
+            while (time.size() < stringLenNS)
+            {
+                time = time + "0";
+            }
+
+            std::cout << time + "\n";
+
+            return time;
+        }
+
         std::vector<std::string> jsonToInfluxFunction(bool ignoreTags, std::vector<std::string> tagSetVector, std::string timeVariableName, std::string jsonFlattenedString)
         {
             //flatten json, convert to string the json, then breaks the string into an array
@@ -129,7 +146,8 @@ class JsonConverter
                 }
                 else
                 {
-                    time = vectorItems[i].substr(vectorItems[i].find("=") + 1);
+
+                    time = convertTimeToNS(vectorItems[i].substr(vectorItems[i].find("=") + 1));
                     //remove the last character which is a ","
                     insertCommandTag = insertCommandTag.substr(0, insertCommandTag.size() - 1);
                     insertCommandField = insertCommandField.substr(0, insertCommandField.size() - 1);
@@ -145,7 +163,9 @@ class JsonConverter
 
             return vectorInserts;
         }
-	public:
+
+    public:
+
         /**
          * Convert a nlohmann::json object to an influxDB INSERT string.
          *
@@ -187,6 +207,7 @@ class JsonConverter
             return insertsVector;
         }
 
-};
+    };
+}
 
 #endif
