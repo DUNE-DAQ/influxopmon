@@ -10,7 +10,7 @@
 #include <vector>
 #include <sstream>
 
-namespace influxOpmon
+namespace influxopmon
 {
     class JsonConverter
     {
@@ -41,6 +41,9 @@ namespace influxOpmon
             {
                 time = time + "0";
             }
+
+            std::cout << time + "\n";
+
             return time;
         }
         std::vector<std::string> jsonToInfluxFunction(bool ignoreTags, std::vector<std::string> tagSetVector, std::string timeVariableName, std::string jsonFlattenedString)
