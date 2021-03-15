@@ -10,6 +10,7 @@
 #include <vector>
 #include <sstream>
 
+
 namespace dunedaq::influxopmon
 {
     class JsonConverter
@@ -34,6 +35,7 @@ namespace dunedaq::influxopmon
 
             return lineOriginal;
         }
+
         std::string convertTimeToNS(std::string time)
         {
             long unsigned int stringLenNS = 19;
@@ -41,11 +43,9 @@ namespace dunedaq::influxopmon
             {
                 time = time + "0";
             }
-
-            std::cout << time + "\n";
-
             return time;
         }
+
         std::vector<std::string> jsonToInfluxFunction(bool ignoreTags, std::vector<std::string> tagSetVector, std::string timeVariableName, std::string jsonFlattenedString)
         {
             //flatten json, convert to string the json, then breaks the string into an array
@@ -143,6 +143,7 @@ namespace dunedaq::influxopmon
                 }
                 else
                 {
+
                     time = convertTimeToNS(vectorItems[i].substr(vectorItems[i].find("=") + 1));
                     //remove the last character which is a ","
                     insertCommandTag = insertCommandTag.substr(0, insertCommandTag.size() - 1);
@@ -159,7 +160,9 @@ namespace dunedaq::influxopmon
 
             return vectorInserts;
         }
+
     public:
+
         /**
          * Convert a nlohmann::json object to an influxDB INSERT string.
          *
@@ -203,6 +206,5 @@ namespace dunedaq::influxopmon
 
     };
 }
-
 
 #endif
