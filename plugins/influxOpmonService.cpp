@@ -90,11 +90,8 @@ namespace dunedaq::influxopmon {
             querry = querry + "'";
 
             charPointer = querry.c_str();
-<<<<<<< Updated upstream
-            executionCommand(charPointer);
-=======
+
             executionCommandSilent(charPointer);
->>>>>>> Stashed changes
             //std::cout << executionCommand(charPointer);
         }
 
