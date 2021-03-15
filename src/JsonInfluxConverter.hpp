@@ -43,9 +43,6 @@ namespace dunedaq::influxopmon
             {
                 time = time + "0";
             }
-
-            std::cout << time + "\n";
-
             return time;
         }
 

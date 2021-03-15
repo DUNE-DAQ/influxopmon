@@ -88,7 +88,7 @@ namespace dunedaq::influxopmon {
             querry = querry + "'";
 
             charPointer = querry.c_str();
-            std::cout << executionCommand(charPointer);
+            //std::cout << executionCommand(charPointer);
         }
 
     protected:
