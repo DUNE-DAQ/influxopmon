@@ -10,11 +10,13 @@
 #include <vector>
 #include <sstream>
 
-class JsonConverter
+namespace influxOpmon
 {
-    std::vector<std::string> insertsVector;
+    class JsonConverter
+    {
+        std::vector<std::string> insertsVector;
 
-	private: 
+    private:
         std::string checkDataType(std::string line)
         {
             std::string lineOriginal = line;
@@ -31,6 +33,15 @@ class JsonConverter
             }
 
             return lineOriginal;
+        }
+        std::string convertTimeToNS(std::string time)
+        {
+            int stringLenNS = 19;
+            while (time.size() < stringLenNS; i++)
+            {
+                time = time + "0";
+            }
+            return time;
         }
         std::vector<std::string> jsonToInfluxFunction(bool ignoreTags, std::vector<std::string> tagSetVector, std::string timeVariableName, std::string jsonFlattenedString)
         {
@@ -129,7 +140,7 @@ class JsonConverter
                 }
                 else
                 {
-                    time = vectorItems[i].substr(vectorItems[i].find("=") + 1);
+                    time = convertTimeToNS(vectorItems[i].substr(vectorItems[i].find("=") + 1));
                     //remove the last character which is a ","
                     insertCommandTag = insertCommandTag.substr(0, insertCommandTag.size() - 1);
                     insertCommandField = insertCommandField.substr(0, insertCommandField.size() - 1);
@@ -145,7 +156,7 @@ class JsonConverter
 
             return vectorInserts;
         }
-	public:
+    public:
         /**
          * Convert a nlohmann::json object to an influxDB INSERT string.
          *
@@ -187,6 +198,8 @@ class JsonConverter
             return insertsVector;
         }
 
-};
+    };
+}
+
 
 #endif
