@@ -10,7 +10,7 @@
 #include <vector>
 #include <sstream>
 
-namespace influxopmon
+namespace dunedaq::influxopmon
 {
     class JsonConverter
     {
@@ -36,8 +36,8 @@ namespace influxopmon
         }
         std::string convertTimeToNS(std::string time)
         {
-            int stringLenNS = 19;
-            while (time.size() < stringLenNS; i++)
+            long unsigned int stringLenNS = 19;
+            while (time.size() < stringLenNS)
             {
                 time = time + "0";
             }
