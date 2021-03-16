@@ -85,11 +85,18 @@ namespace dunedaq::influxopmon {
                 querry = querry + insertsVector[i] + "\n" ;
             }
 
-            querry = querry + "'";
-
+            //silent output
+            querry = querry + "' >nul 2>nul";
             charPointer = querry.c_str();
             executionCommand(charPointer);
-            //std::cout << executionCommand(charPointer);
+
+            //output
+            /*
+            querry = querry + "'";
+            charPointer = querry.c_str();
+            std::cout << executionCommand(charPointer);
+            */
+            
         }
 
     protected:
