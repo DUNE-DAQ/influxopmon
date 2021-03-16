@@ -50,9 +50,17 @@ namespace dunedaq::influxopmon {
             std::string tmp;
             std::stringstream ss(uri);
             std::vector<std::string> ressource;
+            int countArgs = 0;
             while (getline(ss, tmp, ':'))
             {
                 ressource.push_back(tmp);
+                countArgs++;
+            }
+
+            if (countArgs < 7)
+            {
+                std::cout << "invalid URI, follow: influx://Db-hostname:port:database:Username:Password:Protocol(http/https):Delimiter:Tags(0..N) \n Example: influx://dbod-testinfluxyd.cern.ch:8095:db1:usr:pwd:https:.time=:.class_name=";
+                break;
             }
 
             //std::string uri = "influx://dbod-testinfluxyd.cern.ch:8095:db1:admin:admin:https:.time=:.class_name="
