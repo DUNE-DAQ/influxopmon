@@ -61,7 +61,7 @@ namespace dunedaq::influxopmon {
 
             if (countArgs < 7)
             {
-                std::cout << "invalid URI, follow: influx://Db-hostname:port:database:Username:Password:Protocol(http/https):Delimiter:Tags(0..N) \n Example: influx://dbod-testinfluxyd.cern.ch:8095:db1:usr:pwd:https:.time=:.class_name=";
+                std::cout << "invalid URI, follow: influx://Db-hostname:port:database:Username:Password:Protocol(http/https):Delimiter:Tags(0..N) \n Example: influx://dbod-testinfluxyd.cern.ch:8095:db1:usr:pwd:https:.time=:.class_name=\n";
                 exit(0);
             }
 
