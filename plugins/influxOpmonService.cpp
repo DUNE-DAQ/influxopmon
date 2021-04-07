@@ -112,11 +112,7 @@ namespace dunedaq::influxopmon {
         typedef OpmonService inherited;
     private:
         std::string m_host;
-        std::string m_port;
         std::string m_dbname;
-        std::string m_dbaccount;
-        std::string m_dbpassword;
-        std::string m_postProtocol;
         
         std::vector<std::string> tagSetVector;
         std::string m_delimiter;
