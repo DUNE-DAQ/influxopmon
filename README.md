@@ -12,7 +12,7 @@ The console output is the system/database reply to the curl insert statement.
 The system output is the insert statement to the DBMS.
 
 ### URI example :
-influx://188.185.88.195:db1:.time=:.class_name=
+influx://188.185.88.195:db1:.time=:.class_name= 
 
 ### Notes :
 The database is querried using the system's curl library.
