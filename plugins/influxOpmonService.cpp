@@ -11,8 +11,8 @@
 #include <stdexcept>
 #include <array>
 #include "JsonInfluxConverter.hpp"
-
-
+#include <curl/curl.h>
+#include "cpr/cpr.h"
 
 using json = nlohmann::json;
 
@@ -31,24 +31,8 @@ namespace dunedaq::influxopmon {
     {
     public:
 
-        std::string executionCommand(const char* cmd) {
-            std::array<char, 128> buffer;
-            std::string result;
-            std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
-            if (!pipe) {
-                throw std::runtime_error("popen() failed!");
-            }
-            while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
-                result += buffer.data();
-            }
-            return result;
-        }
-        void executionCommandSilent(const char* cmd) {
-            system(cmd);
-        }
 
         explicit influxOpmonService(std::string uri) : dunedaq::opmonlib::OpmonService(uri) {
-
             uri = uri.substr(uri.find("/") + 2);
             std::string tmp;
             std::stringstream ss(uri);
@@ -74,8 +58,6 @@ namespace dunedaq::influxopmon {
             {
                 tagSetVector.push_back(ressource[i]);
             }
-
-
 	}
 
         void publish(nlohmann::json j)
@@ -85,28 +67,16 @@ namespace dunedaq::influxopmon {
             insertsVector = jsonConverter.getInsertsVector();
             
             
-            querry = "curl "  + m_host +  "/?db=" + m_dbname + " --data-binary '";
+            querry = "";
             
             for (unsigned long int i = 0; i < insertsVector.size(); i++)
             {
-                //std::cout << insertsVector[i] + "\n" ;
                 querry = querry + insertsVector[i] + "\n" ;
             }
 
             //silent output
-            querry = querry + "' >nul 2>nul";
-            charPointer = querry.c_str();
-            executionCommand(charPointer);
-
-            //output
-/*           
-    	    querry = querry + "\'";
-            std::cout << querry;
-	    charPointer = querry.c_str();
-            std::cout << executionCommand(charPointer);
-  */          
-            
-        }
+	    executionCommand(m_host + "/?db=" + m_dbname, querry);
+	}
 
     protected:
         typedef OpmonService inherited;
@@ -121,6 +91,11 @@ namespace dunedaq::influxopmon {
         std::string querry;
         const char* charPointer;
         influxopmon::JsonConverter jsonConverter;
+	
+	void executionCommand(std::string adress, std::string cmd) {
+
+                cpr::Response response = cpr::Post(cpr::Url{adress}, cpr::Body{cmd});
+        }
 
     };
 

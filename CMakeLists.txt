@@ -6,6 +6,13 @@ find_package(daq-cmake REQUIRED)
 daq_setup_environment()
 
 find_package(opmonlib REQUIRED)
+find_package(CPR)
+
+FIND_PACKAGE(CURL)
+
+INCLUDE_DIRECTORIES(${CURL_INCLUDE_DIR})
+SET(requiredlibs ${requiredlibs} ${CURL_LIBRARIES} )
+
 
 
 ##############################################################################
@@ -16,7 +23,8 @@ find_package(opmonlib REQUIRED)
 ##############################################################################
 # Plugins
 
-daq_add_plugin(influxOpmonService duneOpmonService LINK_LIBRARIES opmonlib::opmonlib)
+daq_add_plugin(influxOpmonService duneOpmonService LINK_LIBRARIES opmonlib::opmonlib CURL::libcurl  ${CPR_LIBRARIES})
+target_include_directories(${PROJECT_NAME}_influxOpmonService_duneOpmonService PUBLIC ${CPR_INCLUDE_DIRS})
 
 ##############################################################################
 # Integration tests
