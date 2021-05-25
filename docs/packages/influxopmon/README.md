@@ -20,7 +20,7 @@ Translating in the full, following URI eyample:
 daq_application -c rest://localhost:12345 --name yourchoosenname -i influx://188.185.88.195:db1:.time=:.class_name= 
 
 ### Step-by-step :
-1. Ina build environment clone the latest influxopmon tag from DUNE-DAQ
+1. In a build environment clone the latest influxopmon tag from DUNE-DAQ
 2. Verify your environment includes the opmonlib module
 3. Compile your environment
 4. In a runtime environment, run the call URI
