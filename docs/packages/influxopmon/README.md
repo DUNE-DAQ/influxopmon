@@ -9,9 +9,7 @@ Application name: influx://reverseProxyAdress:database name:json delimiter (usua
 
 The library should be used calling the library's "publish" function with as argument a "nlohmann::json" object. More details about the implementation are available in the "Technical information" chapter.
 
-The console output is the system/database reply to the curl insert statement.
-
-The system output is the insert statement to the DBMS.
+The library output is the return statement from the CPR message and, if successfull, the insertion of the JSON content to the TSDB.
 
 ### URI example :
 the influxopmon URI presents as such: influx://188.185.88.195:db1:.time=:.class_name= 
@@ -38,6 +36,8 @@ The publish function is called on data collection by the opmonlib. It calls setI
 ##### private executionCommand
 Takes as parameters the url to which the message should be sent and the command to be sent.
 Uses cpr::Post and awaits cpr::Response.
+
+To debug the application, print the cpr::Response response.
 
 #### JsonConverter
 ##### public setInsertsVector/getInsertsVector
