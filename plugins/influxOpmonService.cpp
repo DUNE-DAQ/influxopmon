@@ -33,7 +33,7 @@ namespace dunedaq::influxopmon {
 
 
         explicit influxOpmonService(std::string uri) : dunedaq::opmonlib::OpmonService(uri) {
-            uri = uri.substr(uri.find("/") + 2);
+	    uri = uri.substr(uri.find("/") + 2);
             std::string tmp;
             std::stringstream ss(uri);
             std::vector<std::string> ressource;
@@ -62,8 +62,8 @@ namespace dunedaq::influxopmon {
 
         void publish(nlohmann::json j)
         {
-            
-            jsonConverter.setInsertsVector(false, tagSetVector, m_delimiter, j.flatten().dump());
+            std::cout << "publish called" << "\n";   
+            jsonConverter.setInsertsVector(j);
             insertsVector = jsonConverter.getInsertsVector();
             
             
@@ -71,6 +71,7 @@ namespace dunedaq::influxopmon {
             
             for (unsigned long int i = 0; i < insertsVector.size(); i++)
             {
+		std::cout << insertsVector[i] << "\n";
                 querry = querry + insertsVector[i] + "\n" ;
             }
 
@@ -95,7 +96,18 @@ namespace dunedaq::influxopmon {
 	void executionCommand(std::string adress, std::string cmd) {
 
                 cpr::Response response = cpr::Post(cpr::Url{adress}, cpr::Body{cmd});
-        }
+        
+		if (response.status_code >= 400) {
+ 		    std::cerr << "Error [" << response.status_code << "] making request" << std::endl;
+		} else if (response.status_code == 0) {
+ 			std::cout << "Status code " << response.status_code << std::endl;
+                        std::cout << "Empty querry" << std::endl;
+		} else {
+		    	std::cout << "Status code " << response.status_code << std::endl;
+			std::cout << "Request took " << response.elapsed << std::endl;
+			std::cout << "Body:" << std::endl << response.text;
+		}
+	}
 
     };
 
