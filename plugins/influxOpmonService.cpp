@@ -59,20 +59,17 @@ namespace dunedaq::influxopmon {
         void publish(nlohmann::json j)
         {
             jsonConverter.setInsertsVector(j);
-            insertsVector = jsonConverter.getInsertsVector();
-            
+            insertsVector = jsonConverter.getInsertsVector();  
             
             querry = "";
             
             for (unsigned long int i = 0; i < insertsVector.size(); i++)
             {
-		executionCommand(m_host + "/?db=" + m_dbname,insertsVector[i]);
-		//std::cout << insertsVector[i] << "\n";
                 querry = querry + insertsVector[i] + "\n" ;
             }
 
             //silent output
-	    //executionCommand(m_host + "/?db=" + m_dbname, querry);
+	    executionCommand(m_host + "/?db=" + m_dbname, querry);
 	}
 
     protected:
