@@ -20,7 +20,8 @@ namespace dunedaq::influxopmon
 
 	private:
 
-        bool errorState = false;
+
+	bool errorState = false;
         const std::string parentTag = "__parent";
         const std::string timeTag = "__time"; 
         const std::string dataTag = "__data";
@@ -29,12 +30,12 @@ namespace dunedaq::influxopmon
         const std::string tags[5] = { parentTag, timeTag, dataTag, childrenTag, propertiesTag };
 
         int keyIndex = 0;
-        std::string nearestParent = "";
         std::string fieldSet = "";
         std::string measurement;
         std::string timeStamp;
         std::vector<std::string> tagSet;
         std::vector<std::string> querries;
+        std::vector<std::string> hierarchy;
 
         std::string convertTimeToNS(std::string time)
         {
@@ -59,7 +60,7 @@ namespace dunedaq::influxopmon
             }
             if (!validTag)
             {
-                std::cout << "Uncorrect tag " << inputTag << ", querry dumped." << '\n';
+                std::cout << "Uncorrect tag " << inputTag << ", querry dumped, integrity might be compromised." << '\n';
                 errorState = true;
             }
         }
@@ -67,37 +68,29 @@ namespace dunedaq::influxopmon
         void BuildString(std::string input)
         {
             
-            if (nearestParent.substr(0, 2) == "__" && input.substr(0, 2) != "__")
+            if (hierarchy[hierarchy.size() - 1].substr(0, 2) == "__" && input.substr(0, 2) != "__")
             {
-                CheckKeyword(nearestParent);
-                if (nearestParent == childrenTag)
+                CheckKeyword(hierarchy[hierarchy.size() - 1]);
+                if (hierarchy[hierarchy.size() - 1] == childrenTag)
                 {
                     tagSet.push_back("." + input);
                 }
-                else if (nearestParent == parentTag)
+                else if (hierarchy[hierarchy.size() - 1] == parentTag)
                 {
                     tagSet.push_back(input);
                 }     
-                else
-                {
-                    tagSet.push_back("");
-                } 
-
-                if (nearestParent == propertiesTag)
+                else if (hierarchy[hierarchy.size() - 1] == propertiesTag)
                 {
                     measurement = input;
                 }
             }
-            if (input != "")
-            {
-                nearestParent = input;
-            }
-            std::cout << "level " << std::to_string(keyIndex) << " input: " << input << '\n';
+         
+           // std::cout << "parent " << hierarchy[hierarchy.size() - 1] << " input: " << input << '\n';
         }
 
         void BuildString(std::string key, std::string data)
         {
-            if (nearestParent == timeTag)
+            if (hierarchy[hierarchy.size() - 1] == timeTag)
             {
                 timeStamp = convertTimeToNS(data);
                 std::string fullTag = "";
@@ -109,18 +102,17 @@ namespace dunedaq::influxopmon
                 {
                     querries.push_back(measurement + "," + "source_id=" + fullTag + " " + fieldSet.substr(0, fieldSet.size() - 1) + " " + timeStamp);
                 }
-                nearestParent = "";
+                
                 fieldSet = "";
                 errorState = false;
             }
-            else if (nearestParent == dataTag)
+            else if (hierarchy[hierarchy.size() - 1] == dataTag)
             {
                 fieldSet = fieldSet + key + "=" + data + ",";
-                std::cout << "key " << key << " data: " << data << '\n';
             }
             else
             {
-                CheckKeyword(nearestParent);
+                CheckKeyword(hierarchy[hierarchy.size() - 1]);
                 std::cout << "Structure error" + '\n';
             }
         }
@@ -132,17 +124,20 @@ namespace dunedaq::influxopmon
             {
                 if (item.value().begin()->is_structured())
                 {
+                    
                     BuildString(item.key());
-                    keyIndex++;
+                    hierarchy.push_back(item.key());
                     RecursiveIterateItems(item.value());
-                    keyIndex--;
-                    tagSet.pop_back();
+                    hierarchy.pop_back();
+                    if ((hierarchy[hierarchy.size() - 1] == childrenTag || hierarchy[hierarchy.size() - 1] == parentTag) && tagSet.size() > 0)
+                    {
+                        tagSet.pop_back();
+                    }
                 }
                 else
-                {   
-
+                {
                     BuildString(item.key());
-                    tagSet.push_back("");
+                    hierarchy.push_back(item.key());
                     for (auto& lastItem : item.value().items())
                     {
                         
@@ -157,18 +152,19 @@ namespace dunedaq::influxopmon
                             BuildString(lastItem.key(), lastItem.value().dump());
                         }
                     }
+                    hierarchy.pop_back();
                 }
             }
         }
-
-        std::vector<std::string> jsonToInfluxFunction(json json)
+	std::vector<std::string> jsonToInfluxFunction(json json)
         {
+            hierarchy.clear();
+            hierarchy.push_back("root");
             querries.clear();
             tagSet.clear();
             RecursiveIterateItems(json);
             return querries;
         }
-
 
     public:
 
