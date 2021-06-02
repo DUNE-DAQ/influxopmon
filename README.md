@@ -1,21 +1,18 @@
 # influxopmon - Influx DB banse plugin for Operational Monitoring
-The library converts a JSON object into an influxdb insert statement, then inserts the statement to an influx database.
+The library converts a JSON object into an influxdb insert statement, then inserts the statement to an influx database connection informations.
 
 ### Building and running :
-The library's constructor takes an URI argument. The URI's syntax is the following (without spaces):
-Application name: influx://reverseProxyAdress:database name:json delimiter (usually time):influx db tags (0..N tags separated by ':').
+The library's constructor takes an URI argument. The URI's syntax is the database :
+Application name: influx://<host>:<port>/<endpoint>?db=<mydb>. Authentication is managed using a reverse proxy, meaning that if the database should be accessed using authentication, the endpoint and port should be setfor the reverse proxy.
 
 The library should be used calling the library's "publish" function with as argument a "nlohmann::json" object.
-
-The console output is the system/database reply to the curl insert statement.
-
+  
+There are no console outputs others than errors. 
+  
 The system output is the insert statement to the DBMS.
 
-### URI example :
-influx://188.185.88.195:db1:.time=:.class_name= 
-
 ### Notes :
-The database is querried using the system's curl library.
+The database is querried using cpr.
 
 In dbt-build-order.cmake, "influxopmon" should be added after "opmonlib".
 
