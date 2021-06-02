@@ -11,7 +11,7 @@
 #include <stdexcept>
 #include <array>
 #include "JsonInfluxConverter.hpp"
-#include <curl/curl.h>
+// #include <curl/curl.h>
 #include "cpr/cpr.h"
 
 using json = nlohmann::json;
@@ -34,25 +34,26 @@ namespace dunedaq::influxopmon {
 
         explicit influxOpmonService(std::string uri) : dunedaq::opmonlib::OpmonService(uri) {
 	    uri = uri.substr(uri.find("/") + 2);
-            std::string tmp;
-            std::stringstream ss(uri);
-            std::vector<std::string> ressource;
-            int countArgs = 0;
-            while (getline(ss, tmp, ':'))
-            {
-                ressource.push_back(tmp);
-                countArgs++;
-            }
+        std::string tmp;
+        std::stringstream ss(uri);
+        std::vector<std::string> ressource;
+        int countArgs = 0;
+        while (getline(ss, tmp, ':'))
+        {
+            ressource.push_back(tmp);
+            countArgs++;
+        }
 
-            if (countArgs < 1)
-            {
-                std::cout << "invalid URI, follow: influx://proxyAdress:database:Delimiter:Tags(0..N) \n Example: influx://188.185.88.195:db1\n";
-                exit(0);
-            }
+        if (countArgs < 1)
+        {
+            std::cout << "invalid URI, follow: influx://proxyAdress:database:Delimiter:Tags(0..N) \n Example: influx://188.185.88.195:db1\n";
+            exit(0);
+        }
 
-	    m_host = ressource[0];
-            m_dbname = ressource[1];
-          
+        m_host = ressource[0];
+        m_port = ressource[1];
+        m_dbname = ressource[2];
+        
 
 	}
 
@@ -61,39 +62,43 @@ namespace dunedaq::influxopmon {
             jsonConverter.setInsertsVector(j);
             insertsVector = jsonConverter.getInsertsVector();  
             
-            querry = "";
+            query = "";
             
             for (unsigned long int i = 0; i < insertsVector.size(); i++)
             {
-                querry = querry + insertsVector[i] + "\n" ;
+                query = query + insertsVector[i] + "\n" ;
             }
 
             //silent output
-	    executionCommand(m_host + "/?db=" + m_dbname, querry);
+	    executionCommand(m_host + ":" + m_port + "/write?db=" + m_dbname, query);
 	}
 
     protected:
         typedef OpmonService inherited;
     private:
-        std::string m_host;
-        std::string m_dbname;
-        
-        std::vector<std::string> insertsVector;
-        
-        std::string querry;
-        const char* charPointer;
-        influxopmon::JsonConverter jsonConverter;
-	
-	void executionCommand(std::string adress, std::string cmd) {
+      std::string m_host;
+      std::string m_port;
+      std::string m_dbname;
 
-                cpr::Response response = cpr::Post(cpr::Url{adress}, cpr::Body{cmd});
-		//std::cout << cmd << "\n";	        
-		if (response.status_code >= 400) {
- 		    std::cerr << "Error [" << response.status_code << "] making request" << std::endl;
-		} else if (response.status_code == 0) {
- 			std::cout << "Status code " << response.status_code << std::endl;
-                        std::cout << "Empty querry" << std::endl;
-		} 
+      std::vector<std::string> insertsVector;
+
+      std::string query;
+      const char* charPointer;
+      influxopmon::JsonConverter jsonConverter;
+
+      void executionCommand(std::string adress, std::string cmd)
+      {
+
+        std::cout << "Address: " << adress << std::endl;
+        std::cout << "Body: " << cmd << std::endl;
+        cpr::Response response = cpr::Post(cpr::Url{ adress }, cpr::Body{ cmd });
+        // std::cout << cmd << "\n";
+        if (response.status_code >= 400) {
+          std::cerr << "Error [" << response.status_code << "] making request" << std::endl;
+        } else if (response.status_code == 0) {
+          std::cout << "Status code " << response.status_code << std::endl;
+          std::cout << "Empty query" << std::endl;
+        } 
 	}
 
     };
