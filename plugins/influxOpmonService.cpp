@@ -19,9 +19,8 @@ using json = nlohmann::json;
 namespace dunedaq {
 
     ERS_DECLARE_ISSUE(influxopmon, CannotPostToDB,
-        "Cannot post to Influx DB " << name,
-        ((std::string)name))
-
+        "Cannot post to Influx DB " << error,
+        ((std::string)error))
 }
 
 
@@ -44,20 +43,27 @@ namespace dunedaq::influxopmon {
                 countArgs++;
             }
 
-            if (countArgs < 1)
+            std::cout << "Arguments count: "<< std::to_string(countArgs) << "\n";
+
+            if (countArgs == 3)
             {
-                std::cout << "invalid URI, follow: influx://proxyAdress:database:Delimiter:Tags(0..N) \n Example: influx://188.185.88.195:db1\n";
+                dbPort == ressource[2] + "/write";
+            }
+            else if (countArgs != 2)
+            {
+                std::cout << "invalid URI, follow : influx://proxyAdress:database:(optional db port):(optional db user name):(optional db password) \n Example: influx://188.185.88.195:db1\n";
                 exit(0);
             }
 
-	    m_host = ressource[0];
-            m_dbname = ressource[1];
-          
+	        hostName = ressource[0];
+            dbName = ressource[1];
+
+
 
 	}
 
         void publish(nlohmann::json j)
-        {
+	{
             jsonConverter.setInsertsVector(j);
             insertsVector = jsonConverter.getInsertsVector();  
             
@@ -68,15 +74,16 @@ namespace dunedaq::influxopmon {
                 querry = querry + insertsVector[i] + "\n" ;
             }
 
-            //silent output
-	    executionCommand(m_host + "/?db=" + m_dbname, querry);
+	        executionCommand(hostName + ":80/insert?db=db1", querry);
 	}
 
     protected:
         typedef OpmonService inherited;
     private:
-        std::string m_host;
-        std::string m_dbname;
+        std::string hostName;
+        std::string dbName;
+        std::string dbPort = "";
+
         
         std::vector<std::string> insertsVector;
         
@@ -86,13 +93,13 @@ namespace dunedaq::influxopmon {
 	
 	void executionCommand(std::string adress, std::string cmd) {
 
-                cpr::Response response = cpr::Post(cpr::Url{adress}, cpr::Body{cmd});
-		//std::cout << cmd << "\n";	        
+        cpr::Response response = cpr::Post(cpr::Url{adress}, cpr::Body{cmd});
+		std::cout << adress << "\n";	
+		std::cout << cmd << "\n";	
 		if (response.status_code >= 400) {
- 		    std::cerr << "Error [" << response.status_code << "] making request" << std::endl;
+			ers::error(CannotPostToDB(ERS_HERE, "Error [" + std::to_string(response.status_code) + "] making request"));
 		} else if (response.status_code == 0) {
- 			std::cout << "Status code " << response.status_code << std::endl;
-                        std::cout << "Empty querry" << std::endl;
+			ers::warning(CannotPostToDB(ERS_HERE, "Querry returned 0"));
 		} 
 	}
 
