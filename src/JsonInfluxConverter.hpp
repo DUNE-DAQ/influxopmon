@@ -37,7 +37,7 @@ namespace dunedaq
             const std::string dataTag = "__data";
             const std::string childrenTag = "__children";
             const std::string propertiesTag = "__properties";
-            const std::string tagName = "source_id";
+            const std::string tagName = "source_id=";
             const std::string tags[5] = { parentTag, timeTag, dataTag, childrenTag, propertiesTag };
 
             int keyIndex = 0;

@@ -13,6 +13,7 @@
 #include "JsonInfluxConverter.hpp"
 #include <curl/curl.h>
 #include "cpr/cpr.h"
+#include <regex>
 
 using json = nlohmann::json;
 
@@ -21,6 +22,10 @@ namespace dunedaq {
     ERS_DECLARE_ISSUE(influxopmon, CannotPostToDB,
         "Cannot post to Influx DB " << error,
         ((std::string)error))
+
+    ERS_DECLARE_ISSUE(influxopmon, WrongURI,
+        "Incorrect URI, use influxdb://<host>:<port>/<endpoint>?db=<mydb> instead of : " << fatal,
+        ((std::string)fatal))
 }
 
 
@@ -28,80 +33,71 @@ namespace dunedaq::influxopmon {
 
     class influxOpmonService : public dunedaq::opmonlib::OpmonService
     {
-    public:
+        public:
 
 
-        explicit influxOpmonService(std::string uri) : dunedaq::opmonlib::OpmonService(uri) {
-	    uri = uri.substr(uri.find("/") + 2);
-            std::string tmp;
-            std::stringstream ss(uri);
-            std::vector<std::string> ressource;
-            int countArgs = 0;
-            while (getline(ss, tmp, ':'))
+        explicit influxOpmonService(std::string uri) : dunedaq::opmonlib::OpmonService(uri) 
+        {
+            std::regex uri_re(R"(([a-zA-Z]+):\/\/([^:\/?#\s]+)+(?::(\d+))?(\/[^?#\s]+)?(?:\?(?:db=([^?#\s]+))))");
+
+            std::smatch uri_match;
+            if (!std::regex_match(uri, uri_match, uri_re)) 
             {
-                ressource.push_back(tmp);
-                countArgs++;
-            }
-
-            std::cout << "Arguments count: "<< std::to_string(countArgs) << "\n";
-
-            if (countArgs == 3)
-            {
-                dbPort == ressource[2] + "/write";
-            }
-            else if (countArgs != 2)
-            {
-                std::cout << "invalid URI, follow : influx://proxyAdress:database:(optional db port):(optional db user name):(optional db password) \n Example: influx://188.185.88.195:db1\n";
+                ers::fatal(WrongURI(ERS_HERE, "Invalid URI syntax: " + uri));
                 exit(0);
             }
 
-	        hostName = ressource[0];
-            dbName = ressource[1];
+            for (size_t i(0); i < uri_match.size(); ++i) 
+            {
+                    std::cout << i << "  " << uri_match[i] << std::endl;
+            }
 
-
-
-	}
+            m_host = uri_match[2];
+            m_port = (!uri_match[3].str().empty() ? uri_match[3] : std::string("8086"));
+            m_path = uri_match[4];
+            m_dbname = uri_match[5];
+        }
 
         void publish(nlohmann::json j)
-	{
+        {
             jsonConverter.setInsertsVector(j);
             insertsVector = jsonConverter.getInsertsVector();  
             
-            querry = "";
+            query = "";
             
             for (unsigned long int i = 0; i < insertsVector.size(); i++)
             {
-                querry = querry + insertsVector[i] + "\n" ;
+                query = query + insertsVector[i] + "\n" ;
             }
 
-	        executionCommand(hostName + ":80/insert?db=db1", querry);
-	}
+	        executionCommand(m_host + ":" + m_port + m_path + "?db=" + m_dbname, query);
+        }
 
-    protected:
-        typedef OpmonService inherited;
-    private:
-        std::string hostName;
-        std::string dbName;
-        std::string dbPort = "";
+        protected:
+            typedef OpmonService inherited;
+        private:
+            std::string m_host;
+            std::string m_port;
+            std::string m_path;
+            std::string m_dbname;
 
+            
+            std::vector<std::string> insertsVector;
+            
+            std::string query;
+            const char* charPointer;
+            influxopmon::JsonConverter jsonConverter;
         
-        std::vector<std::string> insertsVector;
-        
-        std::string querry;
-        const char* charPointer;
-        influxopmon::JsonConverter jsonConverter;
-	
-	void executionCommand(std::string adress, std::string cmd) {
+        void executionCommand(std::string adress, std::string cmd) {
 
-        cpr::Response response = cpr::Post(cpr::Url{adress}, cpr::Body{cmd});
-		std::cout << adress << "\n";	
-		std::cout << cmd << "\n";	
-		if (response.status_code >= 400) {
-			ers::error(CannotPostToDB(ERS_HERE, "Error [" + std::to_string(response.status_code) + "] making request"));
-		} else if (response.status_code == 0) {
-			ers::warning(CannotPostToDB(ERS_HERE, "Querry returned 0"));
-		} 
-	}
+            cpr::Response response = cpr::Post(cpr::Url{adress}, cpr::Body{cmd});
+            
+            if (response.status_code >= 400) {
+                ers::error(CannotPostToDB(ERS_HERE, "Error [" + std::to_string(response.status_code) + "] making request"));
+            } else if (response.status_code == 0) {
+                ers::error(CannotPostToDB(ERS_HERE, "Querry returned 0"));
+            } 
+        }
 
     };
 
