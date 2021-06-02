@@ -24,8 +24,8 @@ namespace dunedaq {
         ((std::string)error))
 
     ERS_DECLARE_ISSUE(influxopmon, WrongURI,
-        "Incorrect URI, use influxdb://<host>:<port>/<endpoint>?db=<mydb> instead of : " << fatal,
-        ((std::string)fatal))
+        "Incorrect URI, use influxdb://<host>:<port>/<endpoint>?db=<mydb> instead of : " << uri,
+        ((std::string)uri))
 }
 
 
@@ -38,18 +38,22 @@ namespace dunedaq::influxopmon {
 
         explicit influxOpmonService(std::string uri) : dunedaq::opmonlib::OpmonService(uri) 
         {
+
+            /*
+            Regex rescription:
+            "([a-zA-Z]+):\/\/([^:\/?#\s]+)+(?::(\d+))?(\/[^?#\s]+)?(?:\?(?:db=([^?#\s]+)))"
+            * 1st Capturing Group `([a-zA-Z])`: Matches protocol
+            * 2nd Capturing Group `([^:\/?#\s])+`: Matches hostname
+            * 3rd Capturing Group `(\d)`: Matches port, optional
+            * 4th Capturing Group `(\/[^?#\s])?`: Matches endpoint/path
+            * 5th Capturing Group `([^#\s])`: Matches dbname
+            */
             std::regex uri_re(R"(([a-zA-Z]+):\/\/([^:\/?#\s]+)+(?::(\d+))?(\/[^?#\s]+)?(?:\?(?:db=([^?#\s]+))))");
 
             std::smatch uri_match;
             if (!std::regex_match(uri, uri_match, uri_re)) 
             {
                 ers::fatal(WrongURI(ERS_HERE, "Invalid URI syntax: " + uri));
-                exit(0);
-            }
-
-            for (size_t i(0); i < uri_match.size(); ++i) 
-            {
-                    std::cout << i << "  " << uri_match[i] << std::endl;
             }
 
             m_host = uri_match[2];
@@ -95,7 +99,7 @@ namespace dunedaq::influxopmon {
             if (response.status_code >= 400) {
                 ers::error(CannotPostToDB(ERS_HERE, "Error [" + std::to_string(response.status_code) + "] making request"));
             } else if (response.status_code == 0) {
-                ers::error(CannotPostToDB(ERS_HERE, "Querry returned 0"));
+                ers::error(CannotPostToDB(ERS_HERE, "Query returned 0"));
             } 
         }
 
