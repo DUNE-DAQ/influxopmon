@@ -1,5 +1,5 @@
 # influxopmon - Influx DB banse plugin for Operational Monitoring
-The library converts a JSON object into an influxdb insert statement, then inserts the statement to an influx database connection informations.
+The library converts a JSON object into an influxdb insert statement, then send the insert statement to an influx database.
 
 ### Building and running :
 The library's constructor takes an URI argument. The URI's syntax is the database :
