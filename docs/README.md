@@ -4,8 +4,7 @@ Influxopmon converts a JSON object into an influxdb insert statement, then inser
 The latest tags are available at https://github.com/DUNE-DAQ/influxopmon/tags.
 
 ## Building and running :
-The library's constructor takes a URI argument. The URI's syntax is the following (without spaces):
-Application name: influx://reverseProxyAdress:database name:json delimiter (usually time):influx db tags (0..N tags separated by ':').
+The library's constructor takes an URI argument. The URI's syntax is the database : Application name: `influxdb://<host>:<port>/<endpoint>?db=<mydb>`. Authentication is managed using a reverse proxy, meaning that if the database should be accessed using authentication, the endpoint and port should be setfor the reverse prox
 
 The library should be used calling the library's "publish" function with as argument a "nlohmann::json" object. More details about the implementation are available in the "Technical information" chapter.
 
