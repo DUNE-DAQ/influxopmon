@@ -1,10 +1,13 @@
-#ifndef INFLUXOPMON_INCLUDE_INFLUXOPMON_JSONINFLUXCONVERTER_H_
-#define INFLUXOPMON_INCLUDE_INFLUXOPMON_JSONINFLUXCONVERTER_H_
+#ifndef INFLUXOPMON_SRC_JSONINFLUXCONVERTER_HPP_
+#define INFLUXOPMON_SRC_JSONINFLUXCONVERTER_HPP_
+
+// * This is part of the DUNE DAQ Application Framework, copyright 2020.
+// * Licensing/copyright details are in the COPYING file that you should have received with this code.
+
 
 #include <algorithm>
 #include <iostream>
 #include <iomanip>
-#include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -18,7 +21,7 @@ namespace dunedaq
         "JSON input incorrect" << Warning,
         ((std::string)Warning))
 
-    ERS_DECLARE_ISSUE(influxopmon, ErrorJSON,
+    ERS_DECLARE_ISSUE(influxopmon, error_JSON,
         "JSON input error" << Error,
         ((std::string)Error))
 
@@ -26,39 +29,83 @@ namespace dunedaq
     {
         class JsonConverter
         {
-            std::vector<std::string> insertsVector;
+            std::vector<std::string> inserts_vector;
+
+
+        public:
+
+            /**
+             * Convert a nlohmann::json object to an influxDB INSERT string.
+             *
+             * @param   Param 1 if true, the tags are not added to the querry.
+             *          Param 2 is a vector of key-words delimiting tags
+             *          Param 3 is the key word delimiting the timestamp
+             *          Param 4 is a string formatted flatened json object
+             *
+             * @return Void, to get call get_inserts_vector
+             */
+            void set_inserts_vector(json json)
+            { 
+                try
+                {
+                    inserts_vector = json_to_influx(json);
+                }
+                catch (const std::runtime_error& re)
+                {
+                    // speciffic handling for runtime_error
+                    ers::error(error_JSON(ERS_HERE, "Runtime error: " + std::string(re.what())));
+                }
+                catch (const std::exception& ex)
+                {
+                    // extending std::exception, except
+                    ers::error(error_JSON(ERS_HERE, "Error occurred: " + std::string(ex.what())));
+                }
+                catch (...)
+                {
+                    ers::error(error_JSON(ERS_HERE, "Unknown failure occurred. Possible memory corruption" ));
+                }
+            }
+            /**
+             * Get a converted vector, to set call set_inserts_vector.
+             *
+             * @return Vector of string formated influxDB INSERT querries.
+             */
+            std::vector<std::string> get_inserts_vector()
+            {
+                return inserts_vector;
+            }
+        
 
         private:
 
 
         bool errorState = false;
-            const std::string parentTag = "__parent";
-            const std::string timeTag = "__time"; 
-            const std::string dataTag = "__data";
-            const std::string childrenTag = "__children";
-            const std::string propertiesTag = "__properties";
-            const std::string tagName = "source_id=";
-            const std::string tags[5] = { parentTag, timeTag, dataTag, childrenTag, propertiesTag };
+            const std::string parent_tag = "__parent";
+            const std::string time_tag = "__time"; 
+            const std::string data_tag = "__data";
+            const std::string children_tag = "__children";
+            const std::string properties_tag = "__properties";
+            const std::string tag_tag = "source_id=";
+            const std::string tags[5] = { parent_tag, time_tag, data_tag, children_tag, properties_tag };
 
             int keyIndex = 0;
-            std::string fieldSet = "";
+            std::string field_set = "";
             std::string measurement;
-            std::string timeStamp;
-            std::vector<std::string> tagSet;
+            std::string time_stamp;
+            std::vector<std::string> tag_set;
             std::vector<std::string> querries;
             std::vector<std::string> hierarchy;
 
-            std::string convertTimeToNS(std::string time)
+            std::string convert_time_to_NS(std::string time)
             {
-                long unsigned int stringLenNS = 19;
-                while (time.size() < stringLenNS)
+                while (time.size() < 19)
                 {
                     time = time + "0";
                 }
                 return time;
             }
 
-            void CheckKeyword(std::string inputTag)
+            void check_keyword(std::string inputTag)
             {
                 bool validTag = false;
                 for (std::string tag : tags)
@@ -75,76 +122,76 @@ namespace dunedaq
                 }
             }
 
-            void BuildString(std::string input)
+            void build_string(std::string input)
             {
                 
                 if (hierarchy[hierarchy.size() - 1].substr(0, 2) == "__" && input.substr(0, 2) != "__")
                 {
-                    CheckKeyword(hierarchy[hierarchy.size() - 1]);
-                    if (hierarchy[hierarchy.size() - 1] == childrenTag)
+                    check_keyword(hierarchy[hierarchy.size() - 1]);
+                    if (hierarchy[hierarchy.size() - 1] == children_tag)
                     {
-                        tagSet.push_back("." + input);
+                        tag_set.push_back("." + input);
                     }
-                    else if (hierarchy[hierarchy.size() - 1] == parentTag)
+                    else if (hierarchy[hierarchy.size() - 1] == parent_tag)
                     {
-                        tagSet.push_back(input);
+                        tag_set.push_back(input);
                     }     
-                    else if (hierarchy[hierarchy.size() - 1] == propertiesTag)
+                    else if (hierarchy[hierarchy.size() - 1] == properties_tag)
                     {
                         measurement = input;
                     }
                 }
             }
 
-            void BuildString(std::string key, std::string data)
+            void build_string(std::string key, std::string data)
             {
-                if (hierarchy[hierarchy.size() - 1] == timeTag)
+                if (hierarchy[hierarchy.size() - 1] == time_tag)
                 {
-                    timeStamp = convertTimeToNS(data);
+                    time_stamp = convert_time_to_NS(data);
                     std::string fullTag = "";
-                    for (std::string tag : tagSet)
+                    for (std::string tag : tag_set)
                     {
                         fullTag = fullTag + tag;
                     }
                     if (!errorState)
                     {
-                        querries.push_back(measurement + "," + tagName + fullTag + " " + fieldSet.substr(0, fieldSet.size() - 1) + " " + timeStamp);
+                        querries.push_back(measurement + "," + tag_tag + fullTag + " " + field_set.substr(0, field_set.size() - 1) + " " + time_stamp);
                     }
                     
-                    fieldSet = "";
+                    field_set = "";
                     errorState = false;
                 }
-                else if (hierarchy[hierarchy.size() - 1] == dataTag)
+                else if (hierarchy[hierarchy.size() - 1] == data_tag)
                 {
-                    fieldSet = fieldSet + key + "=" + data + ",";
+                    field_set = field_set + key + "=" + data + ",";
                 }
                 else
                 {
-                    CheckKeyword(hierarchy[hierarchy.size() - 1]);
+                    check_keyword(hierarchy[hierarchy.size() - 1]);
                     ers::warning(IncorrectJSON(ERS_HERE, "Structure error"));
                 }
             }
             
 
-            void RecursiveIterateItems(const json& j)
+            void recursive_iterate_items(const json& j)
             {
                 for (auto& item : j.items())
                 {
                     if (item.value().begin()->is_structured())
                     {
                         
-                        BuildString(item.key());
+                        build_string(item.key());
                         hierarchy.push_back(item.key());
-                        RecursiveIterateItems(item.value());
+                        recursive_iterate_items(item.value());
                         hierarchy.pop_back();
-                        if ((hierarchy[hierarchy.size() - 1] == childrenTag || hierarchy[hierarchy.size() - 1] == parentTag) && tagSet.size() > 0)
+                        if ((hierarchy[hierarchy.size() - 1] == children_tag || hierarchy[hierarchy.size() - 1] == parent_tag) && tag_set.size() > 0)
                         {
-                            tagSet.pop_back();
+                            tag_set.pop_back();
                         }
                     }
                     else
                     {
-                        BuildString(item.key());
+                        build_string(item.key());
                         hierarchy.push_back(item.key());
                         for (auto& lastItem : item.value().items())
                         {
@@ -153,71 +200,28 @@ namespace dunedaq
                             {
                                 if (lastItem.value().dump()[0] != '"') { "\"" + lastItem.value().dump(); }
                                 if (lastItem.value().dump()[lastItem.value().dump().size() - 1] != '"') { lastItem.value().dump() + "\""; }
-                                BuildString(lastItem.key(), lastItem.value().dump());
+                                build_string(lastItem.key(), lastItem.value().dump());
                             }
                             else
                             {
-                                BuildString(lastItem.key(), lastItem.value().dump());
+                                build_string(lastItem.key(), lastItem.value().dump());
                             }
                         }
                         hierarchy.pop_back();
                     }
                 }
             }
-        std::vector<std::string> jsonToInfluxFunction(json json)
+        std::vector<std::string> json_to_influx(json json)
             {
                 hierarchy.clear();
                 hierarchy.push_back("root");
                 querries.clear();
-                tagSet.clear();
-                RecursiveIterateItems(json);
+                tag_set.clear();
+                recursive_iterate_items(json);
                 return querries;
             }
-
-        public:
-
-            /**
-             * Convert a nlohmann::json object to an influxDB INSERT string.
-             *
-             * @param   Param 1 if true, the tags are not added to the querry.
-             *          Param 2 is a vector of key-words delimiting tags
-             *          Param 3 is the key word delimiting the timestamp
-             *          Param 4 is a string formatted flatened json object
-             *
-             * @return Void, to get call getInsertsVector
-             */
-            void setInsertsVector(json json)
-            { 
-                try
-                {
-                    insertsVector = jsonToInfluxFunction(json);
-                }
-                catch (const std::runtime_error& re)
-                {
-                    // speciffic handling for runtime_error
-                    ers::error(ErrorJSON(ERS_HERE, "Runtime error: " + std::string(re.what())));
-                }
-                catch (const std::exception& ex)
-                {
-                    // extending std::exception, except
-                    ers::error(ErrorJSON(ERS_HERE, "Error occurred: " + std::string(ex.what())));
-                }
-                catch (...)
-                {
-                    ers::error(ErrorJSON(ERS_HERE, "Unknown failure occurred. Possible memory corruption" ));
-                }
-            }
-            /**
-             * Get a converted vector, to set call setInsertsVector.
-             *
-             * @return Vector of string formated influxDB INSERT querries.
-             */
-            std::vector<std::string> getInsertsVector()
-            {
-                return insertsVector;
-            }
         };
-    }
-}
+    } // namespace influxopmon
+} // namespace dunedaq
 
-#endif
+#endif // INFLUXOPMON_SRC_JSONINFLUXCONVERTER_HPP_
