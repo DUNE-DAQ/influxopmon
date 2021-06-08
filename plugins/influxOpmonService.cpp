@@ -1,8 +1,11 @@
 // * This is part of the DUNE DAQ Application Framework, copyright 2020.
 // * Licensing/copyright details are in the COPYING file that you should have received with this code.
+
+#include "JsonInfluxConverter.hpp"
+
 #include "opmonlib/OpmonService.hpp"
 #include "cpr/cpr.h"
-#include "JsonInfluxConverter.hpp"
+
 #include <nlohmann/json.hpp>
 #include <string>
 #include <iostream>
@@ -64,37 +67,26 @@ namespace dunedaq::influxopmon { // namespace dunedaq
             m_dbname = uri_match[5];
         }
 
-        void publish(nlohmann::json j)
+      void publish(nlohmann::json j) override
         {
-            jsonConverter.set_inserts_vector(j);
-            insertsVector = jsonConverter.get_inserts_vector();  
+            m_json_converter.set_inserts_vector(j);
+            m_inserts = m_json_converter.get_inserts_vector();  
             
-            query = "";
+            m_query = "";
             
-            for (unsigned long i = 0; i < insertsVector.size(); i++)
-            {
-                query = query + insertsVector[i] + "\n" ;
+            for (const auto& insert : m_inserts ) {
+                m_query = m_query + insert + "\n" ;
             }
 
-	        execution_command(m_host + ":" + m_port + m_path + "?db=" + m_dbname, query);
+	        execution_command(m_host + ":" + m_port + m_path + "?db=" + m_dbname, m_query);
         }
 
         protected:
             typedef OpmonService inherited;
         private:
-            std::string m_host;
-            std::string m_port;
-            std::string m_path;
-            std::string m_dbname;
 
-            
-            std::vector<std::string> insertsVector;
-            
-            std::string query;
-            const char* charPointer;
-            influxopmon::JsonConverter jsonConverter;
         
-        void execution_command(std::string adress, std::string cmd) {
+        void execution_command(const std::string& adress, const std::string& cmd) {
 
             cpr::Response response = cpr::Post(cpr::Url{adress}, cpr::Body{cmd});
             
@@ -104,6 +96,17 @@ namespace dunedaq::influxopmon { // namespace dunedaq
                 ers::error(cannot_post_to_DB(ERS_HERE, "Query returned 0"));
             } 
         }
+
+            std::string m_host;
+            std::string m_port;
+            std::string m_path;
+            std::string m_dbname;
+            
+            std::vector<std::string> m_inserts;
+            
+            std::string m_query;
+            const char* m_char_pointer;
+            influxopmon::JsonConverter m_json_converter;
 
     };
 
