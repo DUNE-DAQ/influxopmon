@@ -1,10 +1,16 @@
-#ifndef INFLUXOPMON_INCLUDE_INFLUXOPMON_JSONINFLUXCONVERTER_H_
-#define INFLUXOPMON_INCLUDE_INFLUXOPMON_JSONINFLUXCONVERTER_H_
+#ifndef INFLUXOPMON_SRC_JSONINFLUXCONVERTER_HPP_
+#define INFLUXOPMON_SRC_JSONINFLUXCONVERTER_HPP_
+
+// * This is part of the DUNE DAQ Application Framework, copyright 2020.
+// * Licensing/copyright details are in the COPYING file that you should have received with this code.
+
+#include "logging/Logging.hpp"
+
+#include <nlohmann/json.hpp>
 
 #include <algorithm>
 #include <iostream>
 #include <iomanip>
-#include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -18,7 +24,7 @@ namespace dunedaq
         "JSON input incorrect" << Warning,
         ((std::string)Warning))
 
-    ERS_DECLARE_ISSUE(influxopmon, ErrorJSON,
+    ERS_DECLARE_ISSUE(influxopmon, error_JSON,
         "JSON input error" << Error,
         ((std::string)Error))
 
@@ -26,155 +32,10 @@ namespace dunedaq
     {
         class JsonConverter
         {
-            std::vector<std::string> insertsVector;
-
-        private:
-
-
-        bool errorState = false;
-            const std::string parentTag = "__parent";
-            const std::string timeTag = "__time"; 
-            const std::string dataTag = "__data";
-            const std::string childrenTag = "__children";
-            const std::string propertiesTag = "__properties";
-            const std::string tagName = "source_id=";
-            const std::string tags[5] = { parentTag, timeTag, dataTag, childrenTag, propertiesTag };
-
-            int keyIndex = 0;
-            std::string fieldSet = "";
-            std::string measurement;
-            std::string timeStamp;
-            std::vector<std::string> tagSet;
-            std::vector<std::string> querries;
-            std::vector<std::string> hierarchy;
-
-            std::string convertTimeToNS(std::string time)
-            {
-                long unsigned int stringLenNS = 19;
-                while (time.size() < stringLenNS)
-                {
-                    time = time + "0";
-                }
-                return time;
-            }
-
-            void CheckKeyword(std::string inputTag)
-            {
-                bool validTag = false;
-                for (std::string tag : tags)
-                {
-                    if (inputTag == tag)
-                    {
-                        validTag = true;
-                        break;
-                    }
-                }
-                if (!validTag)
-                {
-                    ers::warning(IncorrectJSON(ERS_HERE, "Uncorrect tag " + inputTag + ", querry dumped, integrity might be compromised."));
-                }
-            }
-
-            void BuildString(std::string input)
-            {
-                
-                if (hierarchy[hierarchy.size() - 1].substr(0, 2) == "__" && input.substr(0, 2) != "__")
-                {
-                    CheckKeyword(hierarchy[hierarchy.size() - 1]);
-                    if (hierarchy[hierarchy.size() - 1] == childrenTag)
-                    {
-                        tagSet.push_back("." + input);
-                    }
-                    else if (hierarchy[hierarchy.size() - 1] == parentTag)
-                    {
-                        tagSet.push_back(input);
-                    }     
-                    else if (hierarchy[hierarchy.size() - 1] == propertiesTag)
-                    {
-                        measurement = input;
-                    }
-                }
-            }
-
-            void BuildString(std::string key, std::string data)
-            {
-                if (hierarchy[hierarchy.size() - 1] == timeTag)
-                {
-                    timeStamp = convertTimeToNS(data);
-                    std::string fullTag = "";
-                    for (std::string tag : tagSet)
-                    {
-                        fullTag = fullTag + tag;
-                    }
-                    if (!errorState)
-                    {
-                        querries.push_back(measurement + "," + tagName + fullTag + " " + fieldSet.substr(0, fieldSet.size() - 1) + " " + timeStamp);
-                    }
-                    
-                    fieldSet = "";
-                    errorState = false;
-                }
-                else if (hierarchy[hierarchy.size() - 1] == dataTag)
-                {
-                    fieldSet = fieldSet + key + "=" + data + ",";
-                }
-                else
-                {
-                    CheckKeyword(hierarchy[hierarchy.size() - 1]);
-                    ers::warning(IncorrectJSON(ERS_HERE, "Structure error"));
-                }
-            }
-            
-
-            void RecursiveIterateItems(const json& j)
-            {
-                for (auto& item : j.items())
-                {
-                    if (item.value().begin()->is_structured())
-                    {
-                        
-                        BuildString(item.key());
-                        hierarchy.push_back(item.key());
-                        RecursiveIterateItems(item.value());
-                        hierarchy.pop_back();
-                        if ((hierarchy[hierarchy.size() - 1] == childrenTag || hierarchy[hierarchy.size() - 1] == parentTag) && tagSet.size() > 0)
-                        {
-                            tagSet.pop_back();
-                        }
-                    }
-                    else
-                    {
-                        BuildString(item.key());
-                        hierarchy.push_back(item.key());
-                        for (auto& lastItem : item.value().items())
-                        {
-                            
-                            if(lastItem.value().type() == json::value_t::string)
-                            {
-                                if (lastItem.value().dump()[0] != '"') { "\"" + lastItem.value().dump(); }
-                                if (lastItem.value().dump()[lastItem.value().dump().size() - 1] != '"') { lastItem.value().dump() + "\""; }
-                                BuildString(lastItem.key(), lastItem.value().dump());
-                            }
-                            else
-                            {
-                                BuildString(lastItem.key(), lastItem.value().dump());
-                            }
-                        }
-                        hierarchy.pop_back();
-                    }
-                }
-            }
-        std::vector<std::string> jsonToInfluxFunction(json json)
-            {
-                hierarchy.clear();
-                hierarchy.push_back("root");
-                querries.clear();
-                tagSet.clear();
-                RecursiveIterateItems(json);
-                return querries;
-            }
 
         public:
+
+	  JsonConverter() = default;
 
             /**
              * Convert a nlohmann::json object to an influxDB INSERT string.
@@ -184,40 +45,184 @@ namespace dunedaq
              *          Param 3 is the key word delimiting the timestamp
              *          Param 4 is a string formatted flatened json object
              *
-             * @return Void, to get call getInsertsVector
+             * @return Void, to get call get_inserts_vector
              */
-            void setInsertsVector(json json)
+            void set_inserts_vector(const json& json)
             { 
                 try
                 {
-                    insertsVector = jsonToInfluxFunction(json);
+		  m_inserts_vector = json_to_influx(json);
                 }
                 catch (const std::runtime_error& re)
                 {
                     // speciffic handling for runtime_error
-                    ers::error(ErrorJSON(ERS_HERE, "Runtime error: " + std::string(re.what())));
+                    ers::error(error_JSON(ERS_HERE, "Runtime error: " + std::string(re.what())));
                 }
                 catch (const std::exception& ex)
                 {
                     // extending std::exception, except
-                    ers::error(ErrorJSON(ERS_HERE, "Error occurred: " + std::string(ex.what())));
+                    ers::error(error_JSON(ERS_HERE, "Error occurred: " + std::string(ex.what())));
                 }
-                catch (...)
+                catch (...)  // NOLINT catchall isn't being used here to swallow problems without notification, so it's OK
                 {
-                    ers::error(ErrorJSON(ERS_HERE, "Unknown failure occurred. Possible memory corruption" ));
+                    ers::error(error_JSON(ERS_HERE, "Unknown failure occurred. Possible memory corruption" ));
                 }
             }
             /**
-             * Get a converted vector, to set call setInsertsVector.
+             * Get a converted vector, to set call set_inserts_vector.
              *
              * @return Vector of string formated influxDB INSERT querries.
              */
-            std::vector<std::string> getInsertsVector()
+            std::vector<std::string> get_inserts_vector()
             {
-                return insertsVector;
+                return m_inserts_vector;
+            }
+        
+	  JsonConverter(JsonConverter const&) = delete;            
+	  JsonConverter(JsonConverter&&) = default;                
+	  JsonConverter& operator=(JsonConverter const&) = delete; 
+	  JsonConverter& operator=(JsonConverter&&) = default;     
+
+        private:
+
+            std::vector<std::string> m_inserts_vector;
+
+	  bool m_error_state = false;
+            const std::string m_parent_tag = "__parent";
+            const std::string m_time_tag = "__time"; 
+            const std::string m_data_tag = "__data";
+            const std::string m_children_tag = "__children";
+            const std::string m_properties_tag = "__properties";
+            const std::string m_tag_tag = "source_id=";
+	  const std::vector<std::string> m_tags = { m_parent_tag, m_time_tag, m_data_tag, m_children_tag, m_properties_tag };
+
+            int m_key_index = 0;
+            std::string m_field_set = "";
+            std::string m_measurement;
+            std::string m_time_stamp;
+            std::vector<std::string> m_tag_set;
+            std::vector<std::string> m_querries;
+            std::vector<std::string> m_hierarchy;
+
+            std::string convert_time_to_NS(std::string time)
+            {
+                while (time.size() < 19)
+                {
+                    time = time + "0";
+                }
+                return time;
+            }
+
+            void check_keyword(const std::string& input_tag)
+            {
+	      if (std::find(m_tags.begin(), m_tags.end(), input_tag) ==  m_tags.end())
+                {
+                    ers::warning(IncorrectJSON(ERS_HERE, "Uncorrect tag " + input_tag + ", querry dumped, integrity might be compromised."));
+                }
+            }
+
+            void build_string(const std::string& input)
+            {
+	      auto last_in_hierarchy = m_hierarchy.back();
+
+                if (last_in_hierarchy.substr(0, 2) == "__" && input.substr(0, 2) != "__")
+                {
+                    check_keyword(last_in_hierarchy);
+                    if (last_in_hierarchy == m_children_tag)
+                    {
+                        m_tag_set.push_back("." + input);
+                    }
+                    else if (last_in_hierarchy == m_parent_tag)
+                    {
+                        m_tag_set.push_back(input);
+                    }     
+                    else if (last_in_hierarchy == m_properties_tag)
+                    {
+                        m_measurement = input;
+                    }
+                }
+            }
+
+            void build_string(const std::string& key, const std::string& data)
+            {
+	      auto last_in_hierarchy = m_hierarchy.back();
+                if (last_in_hierarchy == m_time_tag)
+                {
+                    m_time_stamp = convert_time_to_NS(data);
+                    std::string full_tag = "";
+                    for (const std::string& tag : m_tag_set)
+                    {
+                        full_tag = full_tag + tag;
+                    }
+                    if (!m_error_state)
+                    {
+                        m_querries.push_back(m_measurement + "," + m_tag_tag + full_tag + " " + m_field_set.substr(0, m_field_set.size() - 1) + " " + m_time_stamp);
+                    }
+                    
+                    m_field_set = "";
+                    m_error_state = false;
+                }
+                else if (last_in_hierarchy == m_data_tag)
+                {
+                    m_field_set = m_field_set + key + "=" + data + ",";
+                }
+                else
+                {
+                    check_keyword(last_in_hierarchy);
+                    ers::warning(IncorrectJSON(ERS_HERE, "Structure error"));
+                }
+            }
+            
+
+            void recursive_iterate_items(const json& j)
+            {
+                for (auto& item : j.items())
+                {
+                    if (item.value().begin()->is_structured())
+                    {
+                        
+                        build_string(item.key());
+                        m_hierarchy.push_back(item.key());
+                        recursive_iterate_items(item.value());
+                        m_hierarchy.pop_back();
+                        if ((m_hierarchy.back() == m_children_tag || m_hierarchy.back() == m_parent_tag) && !m_tag_set.empty())
+                        {
+			  m_tag_set.pop_back();
+                        }
+                    }
+                    else
+                    {
+                        build_string(item.key());
+                        m_hierarchy.push_back(item.key());
+                        for (auto& last_item : item.value().items())
+                        {
+                            
+                            if(last_item.value().type() == json::value_t::string)
+                            {
+                                if (last_item.value().dump()[0] != '"') { "\"" + last_item.value().dump(); }
+                                if (last_item.value().dump()[last_item.value().dump().size() - 1] != '"') { last_item.value().dump() + "\""; }
+                                build_string(last_item.key(), last_item.value().dump());
+                            }
+                            else
+                            {
+                                build_string(last_item.key(), last_item.value().dump());
+                            }
+                        }
+                        m_hierarchy.pop_back();
+                    }
+                }
+            }
+        std::vector<std::string> json_to_influx(const json& json)
+            {
+	      m_hierarchy.clear();
+                m_hierarchy.push_back("root");
+                m_querries.clear();
+                m_tag_set.clear();
+                recursive_iterate_items(json);
+                return m_querries;
             }
         };
-    }
-}
+    } // namespace influxopmon
+} // namespace dunedaq
 
-#endif
+#endif // INFLUXOPMON_SRC_JSONINFLUXCONVERTER_HPP_

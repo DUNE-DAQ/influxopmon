@@ -7,18 +7,7 @@ daq_setup_environment()
 
 find_package(opmonlib REQUIRED)
 find_package(CPR)
-
-FIND_PACKAGE(CURL)
-
-INCLUDE_DIRECTORIES(${CURL_INCLUDE_DIR})
-SET(requiredlibs ${requiredlibs} ${CURL_LIBRARIES} )
-
-
-
-##############################################################################
-# Main library
-
-#daq_add_library(*.cpp LINK_LIBRARIES ${INFLUXOPMON_DEPENDENCIES})
+find_package(CURL)
 
 ##############################################################################
 # Plugins
@@ -27,9 +16,7 @@ daq_add_plugin(influxOpmonService duneOpmonService LINK_LIBRARIES opmonlib::opmo
 target_include_directories(${PROJECT_NAME}_influxOpmonService_duneOpmonService PUBLIC ${CPR_INCLUDE_DIRS})
 
 ##############################################################################
-# Integration tests
-
-#daq_add_application(opmonlib_test opmonlib_test.cpp TEST LINK_LIBRARIES opmonlib)
+# No integration tests written
 
 ##############################################################################
 # No unit tests written
