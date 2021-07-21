@@ -85,8 +85,8 @@ namespace dunedaq::influxopmon { // namespace dunedaq
         void execution_command(const std::string& adress, const std::string& cmd) {
 
             cpr::Response response = cpr::Post(cpr::Url{adress}, cpr::Body{cmd});
-	        std::cout << adress << std::endl;
-            std::cout << cmd << std::endl;
+	        //std::cout << adress << std::endl;
+            //std::cout << cmd << std::endl;
 
 
             if (response.status_code >= 400) {
