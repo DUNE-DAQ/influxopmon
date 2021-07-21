@@ -5,7 +5,6 @@
 
 #include "opmonlib/OpmonService.hpp"
 #include "cpr/cpr.h"
-
 #include <nlohmann/json.hpp>
 #include <string>
 #include <iostream>
@@ -43,8 +42,6 @@ namespace dunedaq::influxopmon { // namespace dunedaq
 
         explicit influxOpmonService(std::string uri) : dunedaq::opmonlib::OpmonService(uri) 
         {
-
-            
             //Regex rescription:
             //"([a-zA-Z]+):\/\/([^:\/?#\s]+)+(?::(\d+))?(\/[^?#\s]+)?(?:\?(?:db=([^?#\s]+)))"
             //* 1st Capturing Group `([a-zA-Z])`: Matches protocol
@@ -84,12 +81,14 @@ namespace dunedaq::influxopmon { // namespace dunedaq
         protected:
             typedef OpmonService inherited;
         private:
-
         
         void execution_command(const std::string& adress, const std::string& cmd) {
 
             cpr::Response response = cpr::Post(cpr::Url{adress}, cpr::Body{cmd});
-            
+	        std::cout << adress << std::endl;
+            std::cout << cmd << std::endl;
+
+
             if (response.status_code >= 400) {
                 ers::error(cannot_post_to_DB(ERS_HERE, "Error [" + std::to_string(response.status_code) + "] making request"));
             } else if (response.status_code == 0) {
@@ -97,16 +96,16 @@ namespace dunedaq::influxopmon { // namespace dunedaq
             } 
         }
 
-            std::string m_host;
-            std::string m_port;
-            std::string m_path;
-            std::string m_dbname;
-            
-            std::vector<std::string> m_inserts;
-            
-            std::string m_query;
-            const char* m_char_pointer;
-            influxopmon::JsonConverter m_json_converter;
+        std::string m_host;
+        std::string m_port;
+        std::string m_path;
+        std::string m_dbname;
+        
+        std::vector<std::string> m_inserts;
+        
+        std::string m_query;
+        const char* m_char_pointer;
+        influxopmon::JsonConverter m_json_converter;
 
     };
 

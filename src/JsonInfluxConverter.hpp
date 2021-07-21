@@ -94,7 +94,8 @@ namespace dunedaq
             const std::string m_children_tag = "__children";
             const std::string m_properties_tag = "__properties";
             const std::string m_tag_tag = "source_id=";
-	  const std::vector<std::string> m_tags = { m_parent_tag, m_time_tag, m_data_tag, m_children_tag, m_properties_tag };
+            const std::string separator = ".";
+	        const std::vector<std::string> m_tags = { m_parent_tag, m_time_tag, m_data_tag, m_children_tag, m_properties_tag };
 
             int m_key_index = 0;
             std::string m_field_set = "";
@@ -115,22 +116,56 @@ namespace dunedaq
 
             void check_keyword(const std::string& input_tag)
             {
-	      if (std::find(m_tags.begin(), m_tags.end(), input_tag) ==  m_tags.end())
+	            if (std::find(m_tags.begin(), m_tags.end(), input_tag) ==  m_tags.end())
                 {
                     ers::warning(IncorrectJSON(ERS_HERE, "Uncorrect tag " + input_tag + ", querry dumped, integrity might be compromised."));
                 }
             }
 
+            void RecursiveIterateData(std::vector<std::string> composite_key, const json& j)
+            {
+                
+                //Breaks down structures in dataTag
+                for (auto& item : j.items())
+                {
+                    if (item.value().type() == json::value_t::object)
+                    {
+                        composite_key.push_back(separator);
+                        composite_key.push_back(item.key());
+                        RecursiveIterateData(composite_key, item.value());
+                    }
+                    //if no structure
+                    if (item.value().type() != json::value_t::object)
+                    {
+                        if (item.key() == "")
+                        {
+                            m_field_set = m_field_set + composite_key[0] + "=" + item.value().dump() + ",";
+                        }
+                        else
+                        {
+                            m_field_set = m_field_set + std::accumulate(composite_key.begin(), composite_key.end(), std::string("")) + separator + item.key() + "=" + item.value().dump() + ",";
+                            std::cout << std::accumulate(composite_key.begin(), composite_key.end(), std::string("")) + separator + item.key() + "=" + item.value().dump() << std::endl;
+                        }
+                    }
+                    else
+                    {
+                        //Twice to also remove the separator
+                        composite_key.pop_back();
+                        composite_key.pop_back();
+                    }
+                }
+            }
+
             void build_string(const std::string& input)
             {
-	      auto last_in_hierarchy = m_hierarchy.back();
+                auto last_in_hierarchy = m_hierarchy.back();
 
                 if (last_in_hierarchy.substr(0, 2) == "__" && input.substr(0, 2) != "__")
                 {
                     check_keyword(last_in_hierarchy);
                     if (last_in_hierarchy == m_children_tag)
                     {
-                        m_tag_set.push_back("." + input);
+                        m_tag_set.push_back(separator + input);
                     }
                     else if (last_in_hierarchy == m_parent_tag)
                     {
@@ -143,12 +178,12 @@ namespace dunedaq
                 }
             }
 
-            void build_string(const std::string& key, const std::string& data)
+            void build_string(const std::string& key, json data)
             {
-	      auto last_in_hierarchy = m_hierarchy.back();
+	            auto last_in_hierarchy = m_hierarchy.back();
                 if (last_in_hierarchy == m_time_tag)
                 {
-                    m_time_stamp = convert_time_to_NS(data);
+                    m_time_stamp = convert_time_to_NS(data.dump());
                     std::string full_tag = "";
                     for (const std::string& tag : m_tag_set)
                     {
@@ -164,7 +199,8 @@ namespace dunedaq
                 }
                 else if (last_in_hierarchy == m_data_tag)
                 {
-                    m_field_set = m_field_set + key + "=" + data + ",";
+                    std::vector<std::string> v(1, key);
+                    RecursiveIterateData(v, data);
                 }
                 else
                 {
@@ -187,7 +223,7 @@ namespace dunedaq
                         m_hierarchy.pop_back();
                         if ((m_hierarchy.back() == m_children_tag || m_hierarchy.back() == m_parent_tag) && !m_tag_set.empty())
                         {
-			  m_tag_set.pop_back();
+			                m_tag_set.pop_back();
                         }
                     }
                     else
@@ -201,11 +237,11 @@ namespace dunedaq
                             {
                                 if (last_item.value().dump()[0] != '"') { "\"" + last_item.value().dump(); }
                                 if (last_item.value().dump()[last_item.value().dump().size() - 1] != '"') { last_item.value().dump() + "\""; }
-                                build_string(last_item.key(), last_item.value().dump());
+                                build_string(last_item.key(), last_item.value());
                             }
                             else
                             {
-                                build_string(last_item.key(), last_item.value().dump());
+                                build_string(last_item.key(), last_item.value());
                             }
                         }
                         m_hierarchy.pop_back();
