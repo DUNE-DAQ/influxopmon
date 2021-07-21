@@ -197,7 +197,8 @@ namespace dunedaq
                     m_field_set = "";
                     m_error_state = false;
                 }
-                else if (last_in_hierarchy == m_data_tag)
+                //FIX ME ASAP
+                else //if (last_in_hierarchy == m_data_tag)
                 {
                     std::vector<std::string> v(1, key);
                     RecursiveIterateData(v, data);
