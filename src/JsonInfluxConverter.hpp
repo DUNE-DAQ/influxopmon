@@ -202,11 +202,12 @@ namespace dunedaq
                     std::vector<std::string> v(1, key);
                     RecursiveIterateData(v, data);
                 }
-                else
+                //FIX ME ASAP
+                /*else
                 {
                     check_keyword(last_in_hierarchy);
                     ers::warning(IncorrectJSON(ERS_HERE, "Structure error"));
-                }
+                }*/
             }
             
 
