@@ -155,6 +155,31 @@ namespace dunedaq
                     }
                 }
             }
+            
+            std::string GetLastParent(std::vector<std::string> hierarchy,std::string tag_searched)
+            {
+                bool validTag = false;
+                int n = 0;
+                std::string concatenated_hierarchy;
+                while (!validTag)
+                {
+                    for (std::string tag : m_tags)
+                    {
+                        if (hierarchy[hierarchy.size() - (n + 1)] == tag && tag == tag_searched)
+                        {
+                            for (int i = n-1; i >= 0; i--)
+                            {
+                                concatenated_hierarchy = concatenated_hierarchy + hierarchy[hierarchy.size() - (i +1)] + ".";
+                            }
+
+                            validTag = true;
+                            return concatenated_hierarchy;
+                        }
+                    }
+                    n++;
+                }
+                return "";
+            }
 
             void build_string(const std::string& input)
             {
@@ -197,18 +222,25 @@ namespace dunedaq
                     m_field_set = "";
                     m_error_state = false;
                 }
-                //FIX ME ASAP
-                else //if (last_in_hierarchy == m_data_tag)
+                else 
                 {
-                    std::vector<std::string> v(1, key);
+                    std::string last_parent;
+
+                    last_parent = GetLastParent(m_hierarchy, m_data_tag);
+                    
+                    //If no key remove the separator from parents //FIXME no key when parsed after strucutre...
+                    if (last_parent.size() > 0 && key == "")
+                    {
+                        if (last_parent[last_parent.size() - 1] == separator[0])
+                        {
+                            last_parent = last_parent.substr(0, last_parent.size() - 1);
+                        }
+                    }
+
+                    std::vector<std::string> v(1, last_parent + key);
                     RecursiveIterateData(v, data);
+                    
                 }
-                //FIX ME ASAP
-                /*else
-                {
-                    check_keyword(last_in_hierarchy);
-                    ers::warning(IncorrectJSON(ERS_HERE, "Structure error"));
-                }*/
             }
             
 
