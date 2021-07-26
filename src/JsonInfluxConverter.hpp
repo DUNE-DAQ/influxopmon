@@ -144,7 +144,7 @@ namespace dunedaq
                         else
                         {
                             m_field_set = m_field_set + std::accumulate(composite_key.begin(), composite_key.end(), std::string("")) + separator + item.key() + "=" + item.value().dump() + ",";
-                            std::cout << std::accumulate(composite_key.begin(), composite_key.end(), std::string("")) + separator + item.key() + "=" + item.value().dump() << std::endl;
+                            //std::cout << std::accumulate(composite_key.begin(), composite_key.end(), std::string("")) + separator + item.key() + "=" + item.value().dump() << std::endl;
                         }
                     }
                     else
