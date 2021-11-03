@@ -77,7 +77,7 @@ private:
   const std::string m_children_tag = "__children";
   const std::string m_properties_tag = "__properties";
   const std::string m_tag_tag = "source_id=";
-  const std::string separator = ".";
+  const std::string m_separator = ".";
   const std::vector<std::string> m_tags = { m_parent_tag, m_time_tag, m_data_tag, m_children_tag, m_properties_tag };
 
   int m_key_index = 0;
@@ -85,7 +85,7 @@ private:
   std::string m_measurement;
   std::string m_time_stamp;
   std::vector<std::string> m_tag_set;
-  std::vector<std::string> m_querries;
+  std::vector<std::string> m_queries;
   std::vector<std::string> m_hierarchy;
 
   std::string convert_time_to_NS(std::string time)
@@ -104,15 +104,15 @@ private:
     }
   }
 
-  void RecursiveIterateData(std::vector<std::string> composite_key, const json& j)
+  void recursive_iterate_data(std::vector<std::string> composite_key, const json& j)
   {
 
     // Breaks down structures in dataTag
     for (auto& item : j.items()) {
       if (item.value().type() == json::value_t::object) {
-        composite_key.push_back(separator);
+        composite_key.push_back(m_separator);
         composite_key.push_back(item.key());
-        RecursiveIterateData(composite_key, item.value());
+        recursive_iterate_data(composite_key, item.value());
       }
       // if no structure
       if (item.value().type() != json::value_t::object) {
@@ -120,19 +120,19 @@ private:
           m_field_set = m_field_set + composite_key[0] + "=" + item.value().dump() + ",";
         } else {
           m_field_set = m_field_set + std::accumulate(composite_key.begin(), composite_key.end(), std::string("")) +
-                        separator + item.key() + "=" + item.value().dump() + ",";
-          // std::cout << std::accumulate(composite_key.begin(), composite_key.end(), std::string("")) + separator +
+                        m_separator + item.key() + "=" + item.value().dump() + ",";
+          // std::cout << std::accumulate(composite_key.begin(), composite_key.end(), std::string("")) + m_separator +
           // item.key() + "=" + item.value().dump() << std::endl;
         }
       } else {
-        // Twice to also remove the separator
+        // Twice to also remove the m_separator
         composite_key.pop_back();
         composite_key.pop_back();
       }
     }
   }
 
-  std::string GetLastParent(std::vector<std::string> hierarchy, std::string tag_searched)
+  std::string get_last_parent(std::vector<std::string> hierarchy, std::string tag_searched)
   {
     bool validTag = false;
     int n = 0;
@@ -160,7 +160,7 @@ private:
     if (last_in_hierarchy.substr(0, 2) == "__" && input.substr(0, 2) != "__") {
       check_keyword(last_in_hierarchy);
       if (last_in_hierarchy == m_children_tag) {
-        m_tag_set.push_back(separator + input);
+        m_tag_set.push_back(m_separator + input);
       } else if (last_in_hierarchy == m_parent_tag) {
         m_tag_set.push_back(input);
       } else if (last_in_hierarchy == m_properties_tag) {
@@ -179,7 +179,7 @@ private:
         full_tag = full_tag + tag;
       }
       if (!m_error_state) {
-        m_querries.push_back(m_measurement + "," + m_tag_tag + full_tag + " " +
+        m_queries.push_back(m_measurement + "," + m_tag_tag + full_tag + " " +
                              m_field_set.substr(0, m_field_set.size() - 1) + " " + m_time_stamp);
       }
 
@@ -188,17 +188,17 @@ private:
     } else {
       std::string last_parent;
 
-      last_parent = GetLastParent(m_hierarchy, m_data_tag);
+      last_parent = get_last_parent(m_hierarchy, m_data_tag);
 
-      // If no key remove the separator from parents //FIXME no key when parsed after strucutre...
+      // If no key remove the m_separator from parents //FIXME no key when parsed after strucutre...
       if (last_parent.size() > 0 && key == "") {
-        if (last_parent[last_parent.size() - 1] == separator[0]) {
+        if (last_parent[last_parent.size() - 1] == m_separator[0]) {
           last_parent = last_parent.substr(0, last_parent.size() - 1);
         }
       }
 
       std::vector<std::string> v(1, last_parent + key);
-      RecursiveIterateData(v, data);
+      recursive_iterate_data(v, data);
     }
   }
 
@@ -239,10 +239,10 @@ private:
   {
     m_hierarchy.clear();
     m_hierarchy.push_back("root");
-    m_querries.clear();
+    m_queries.clear();
     m_tag_set.clear();
     recursive_iterate_items(json);
-    return m_querries;
+    return m_queries;
   }
 };
 } // namespace influxopmon
