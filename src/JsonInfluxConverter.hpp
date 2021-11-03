@@ -100,7 +100,7 @@ private:
   {
     if (std::find(m_tags.begin(), m_tags.end(), input_tag) == m_tags.end()) {
       ers::warning(
-        IncorrectJSON(ERS_HERE, "Uncorrect tag " + input_tag + ", querry dumped, integrity might be compromised."));
+        IncorrectJSON(ERS_HERE, "Unknown tag " + input_tag + ", query discarded, integrity might be compromised."));
     }
   }
 
