@@ -9,6 +9,15 @@ find_package(opmonlib REQUIRED)
 find_package(CPR)
 find_package(CURL)
 
+find_package(nlohmann_json REQUIRED )
+find_package(logging REQUIRED )
+
+
+##############################################################################
+# Main library
+daq_add_library(*.cpp LINK_LIBRARIES opmonlib::opmonlib)
+
+
 ##############################################################################
 # Plugins
 
@@ -22,6 +31,8 @@ target_include_directories(${PROJECT_NAME}_influxOpmonService_duneOpmonService P
 # No unit tests written
 
 ##############################################################################
+# Test applications
+daq_add_application( test_converter test_converter.cxx TEST LINK_LIBRARIES influxopmon)
 
 daq_install()
 

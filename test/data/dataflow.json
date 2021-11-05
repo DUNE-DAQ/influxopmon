@@ -1,0 +1,192 @@
+{
+  "__parent": {
+    "ale_test_dataflow": {
+      "__children": {
+        "data_fragments_q": {
+          "__properties": {
+            "dunedaq.appfwk.queueinfo.Info": {
+              "__data": {
+                "capacity": 1000,
+                "number_of_elements": 0
+              },
+              "__time": 1635923753
+            }
+          }
+        },
+        "data_requests_0": {
+          "__properties": {
+            "dunedaq.appfwk.queueinfo.Info": {
+              "__data": {
+                "capacity": 100,
+                "number_of_elements": 0
+              },
+              "__time": 1635923753
+            }
+          }
+        },
+        "data_requests_1": {
+          "__properties": {
+            "dunedaq.appfwk.queueinfo.Info": {
+              "__data": {
+                "capacity": 100,
+                "number_of_elements": 0
+              },
+              "__time": 1635923753
+            }
+          }
+        },
+        "datawriter": {
+          "__properties": {
+            "dunedaq.dfmodules.datawriterinfo.Info": {
+              "__data": {
+                "bytes_output": 968864,
+                "new_records_received": 10,
+                "new_records_written": 10,
+                "records_received": 13,
+                "records_written": 13
+              },
+              "__time": 1635923753
+            }
+          }
+        },
+        "ntoq_fragments_7": {
+          "__properties": {
+            "dunedaq.nwqueueadapters.networktoqueueinfo.Info": {
+              "__data": {
+                "push_failed_count": 0,
+                "pushed_count": 26,
+                "received_count": 26
+              },
+              "__time": 1635923753
+            }
+          }
+        },
+        "ntoq_trigdec": {
+          "__properties": {
+            "dunedaq.nwqueueadapters.networktoqueueinfo.Info": {
+              "__data": {
+                "push_failed_count": 0,
+                "pushed_count": 13,
+                "received_count": 13
+              },
+              "__time": 1635923753
+            }
+          }
+        },
+        "qton_datareq_0": {
+          "__properties": {
+            "dunedaq.nwqueueadapters.queuetonetworkinfo.Info": {
+              "__data": {
+                "popped_count": 13,
+                "send_failed_count": 0,
+                "sent_count": 13
+              },
+              "__time": 1635923753
+            }
+          }
+        },
+        "qton_datareq_1": {
+          "__properties": {
+            "dunedaq.nwqueueadapters.queuetonetworkinfo.Info": {
+              "__data": {
+                "popped_count": 13,
+                "send_failed_count": 0,
+                "sent_count": 13
+              },
+              "__time": 1635923753
+            }
+          }
+        },
+        "qton_token": {
+          "__properties": {
+            "dunedaq.nwqueueadapters.queuetonetworkinfo.Info": {
+              "__data": {
+                "popped_count": 13,
+                "send_failed_count": 0,
+                "sent_count": 13
+              },
+              "__time": 1635923753
+            }
+          }
+        },
+        "token_q": {
+          "__properties": {
+            "dunedaq.appfwk.queueinfo.Info": {
+              "__data": {
+                "capacity": 100,
+                "number_of_elements": 0
+              },
+              "__time": 1635923753
+            }
+          }
+        },
+        "trb": {
+          "__properties": {
+            "dunedaq.dfmodules.triggerrecordbuilderinfo.Info": {
+              "__data": {
+                "abandoned_trigger_records": 0,
+                "average_data_request_width": 2000.0,
+                "average_decision_width": 2000.0,
+                "average_millisecond_per_trigger": 33.0,
+                "duplicated_trigger_ids": 0,
+                "fragments_in_the_book": 0,
+                "generated_trigger_records": 13,
+                "invalid_requests": 0,
+                "loop_counter": 30,
+                "lost_fragments": 0,
+                "pending_fragments": 0,
+                "pending_trigger_decisions": 0,
+                "received_trigger_decisions": 13,
+                "sleep_counter": 303,
+                "timed_out_trigger_records": 0,
+                "unexpected_fragments": 0,
+                "unexpected_trigger_decisions": 0
+              },
+              "__time": 1635923753
+            }
+          }
+        },
+        "trigger_decision_from_netq": {
+          "__properties": {
+            "dunedaq.appfwk.queueinfo.Info": {
+              "__data": {
+                "capacity": 100,
+                "number_of_elements": 0
+              },
+              "__time": 1635923753
+            }
+          }
+        },
+        "trigger_record_q": {
+          "__properties": {
+            "dunedaq.appfwk.queueinfo.Info": {
+              "__data": {
+                "capacity": 100,
+                "number_of_elements": 0
+              },
+              "__time": 1635923753
+            }
+          }
+        }
+      },
+      "__properties": {
+        "dunedaq.appfwk.appinfo.Info": {
+          "__data": {
+            "busy": false,
+            "error": false,
+            "state": "RUNNING"
+          },
+          "__time": 1635923753
+        },
+        "dunedaq.rcif.runinfo.Info": {
+          "__data": {
+            "running": true,
+            "runno": 222,
+            "runtime": 13
+          },
+          "__time": 1635923753
+        }
+      }
+    }
+  }
+}

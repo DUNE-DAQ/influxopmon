@@ -1,7 +1,7 @@
 // * This is part of the DUNE DAQ Application Framework, copyright 2020.
 // * Licensing/copyright details are in the COPYING file that you should have received with this code.
 
-#include "JsonInfluxConverter.hpp"
+#include "InfluxInsertQueriesBuilder.hpp"
 
 #include "cpr/cpr.h"
 #include "opmonlib/OpmonService.hpp"
@@ -62,25 +62,34 @@ public:
 
   void publish(nlohmann::json j) override
   {
-    m_json_converter.set_inserts_vector(j);
-    m_inserts = m_json_converter.get_inserts_vector();
+    // influxopmon::JsonConverter m_json_converter;
+    // m_json_converter.set_inserts_vector(j);
+    // auto inserts = m_json_converter.get_inserts_vector();
 
-    m_query = "";
+    // std::string query;
+    // for (const auto& insert : inserts) {
+    //   query = query + insert + "\n";
+    // }
 
-    for (const auto& insert : m_inserts) {
-      m_query = m_query + insert + "\n";
+    // execute(m_host + ":" + m_port + m_path + "?db=" + m_dbname, query);
+
+    InsertQueriesBuilder qbuilder(j);
+
+    std::ostringstream query;
+    for ( auto& iq : qbuilder.get()) {
+      query << iq << std::endl;
     }
+  
+    execute(m_host + ":" + m_port + m_path + "?db=" + m_dbname, query.str());
 
-    execution_command(m_host + ":" + m_port + m_path + "?db=" + m_dbname, m_query);
   }
 
 protected:
   typedef OpmonService inherited;
 
 private:
-  void execution_command(const std::string& adress, const std::string& cmd)
+  void execute(const std::string& adress, const std::string& cmd)
   {
-
     cpr::Response response = cpr::Post(cpr::Url{ adress }, cpr::Body{ cmd });
     // std::cout << adress << std::endl;
     // std::cout << cmd << std::endl;
@@ -96,20 +105,9 @@ private:
   std::string m_port;
   std::string m_path;
   std::string m_dbname;
-
-  std::vector<std::string> m_inserts;
-
-  std::string m_query;
-  const char* m_char_pointer;
-  influxopmon::JsonConverter m_json_converter;
 };
 
 } // namespace dunedaq::influxopmon
 
-extern "C"
-{
-  std::shared_ptr<dunedaq::opmonlib::OpmonService> make(std::string service)
-  { // namespace dunedaq::influxopmon
-    return std::shared_ptr<dunedaq::opmonlib::OpmonService>(new dunedaq::influxopmon::influxOpmonService(service));
-  }
-}
+DEFINE_DUNE_OPMON_SERVICE(dunedaq::influxopmon::influxOpmonService)
+
