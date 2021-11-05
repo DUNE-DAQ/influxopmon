@@ -2,7 +2,7 @@
  * @brief Using namespace for convenience
  */
 #include "JsonInfluxConverter.hpp"
-#include "InfluxInsertQueriesBuilder.hpp"
+#include "InsertQueryListBuilder.hpp"
 
 
 using json = nlohmann::json;
@@ -30,7 +30,7 @@ int main(int argc, char const *argv[])
         std::cout << str << std::endl;
     }
     std::cout << "------" << std::endl;
-    auto iqb = dunedaq::influxopmon::InsertQueriesBuilder(j);
+    auto iqb = dunedaq::influxopmon::InsertQueryListBuilder(j);
 
     for( auto str : iqb.get()) {
         std::cout << str << std::endl;

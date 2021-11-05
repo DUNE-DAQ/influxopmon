@@ -1,4 +1,4 @@
-#include "InfluxInsertQueriesBuilder.hpp"
+#include "InsertQueryListBuilder.hpp"
 #include <string>
 #include <iomanip>
 #include "opmonlib/JSONTags.hpp"
@@ -13,7 +13,7 @@ using opmonlib::JSONTags;
 namespace influxopmon {
 
 // Build insert query objects
-InsertQueriesBuilder::InsertQueriesBuilder( const json& j ) {
+InsertQueryListBuilder::InsertQueryListBuilder( const json& j ) {
 
     std::vector<InsertQuery> queries;
     // Expect only 1 key '__parent'
@@ -31,7 +31,7 @@ InsertQueriesBuilder::InsertQueriesBuilder( const json& j ) {
 }
 
 
-void InsertQueriesBuilder::parse_json_obj(std::string path,
+void InsertQueryListBuilder::parse_json_obj(std::string path,
                                           const nlohmann::json& j) {
   // even easier with structured bindings (C++17)
   for (auto& [key, obj] : j.items()) {
@@ -79,5 +79,6 @@ void InsertQueriesBuilder::parse_json_obj(std::string path,
     }
   }
 }
-}
-}
+
+} // namespace influxopmon
+} // namespace dunedaq

@@ -22,12 +22,12 @@ struct InsertQuery {
   uint64_t time;
 };
 
-class InsertQueriesBuilder {
+class InsertQueryListBuilder {
  public:
   inline static constexpr char m_tag_tag[] = "source_id=";
   inline static constexpr char m_separator[] = ".";
 
-  InsertQueriesBuilder(const nlohmann::json& j);
+  InsertQueryListBuilder(const nlohmann::json& j);
   
   const std::vector<InsertQuery>& get() const { return m_queries; }
 

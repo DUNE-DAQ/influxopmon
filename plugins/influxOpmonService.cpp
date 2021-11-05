@@ -1,7 +1,7 @@
 // * This is part of the DUNE DAQ Application Framework, copyright 2020.
 // * Licensing/copyright details are in the COPYING file that you should have received with this code.
 
-#include "InfluxInsertQueriesBuilder.hpp"
+#include "InsertQueryListBuilder.hpp"
 
 #include "cpr/cpr.h"
 #include "opmonlib/OpmonService.hpp"
@@ -73,7 +73,7 @@ public:
 
     // execute(m_host + ":" + m_port + m_path + "?db=" + m_dbname, query);
 
-    InsertQueriesBuilder qbuilder(j);
+    InsertQueryListBuilder qbuilder(j);
 
     std::ostringstream query;
     for ( auto& iq : qbuilder.get()) {
