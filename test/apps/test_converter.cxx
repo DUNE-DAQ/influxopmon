@@ -19,16 +19,16 @@ int main(int argc, char const *argv[])
     json j = json::parse(file);
 
     std::cout << j << std::endl;
-    std::cout << "------" << std::endl;
+    // std::cout << "------" << std::endl;
 
-    std::vector<std::string> m_inserts;
+    // std::vector<std::string> m_inserts;
 
-    dunedaq::influxopmon::JsonConverter json_converter;
-    json_converter.set_inserts_vector(j);
-    m_inserts = json_converter.get_inserts_vector();
-    for( auto str : m_inserts) {
-        std::cout << str << std::endl;
-    }
+    // dunedaq::influxopmon::JsonConverter json_converter;
+    // json_converter.set_inserts_vector(j);
+    // m_inserts = json_converter.get_inserts_vector();
+    // for( auto str : m_inserts) {
+    //     std::cout << str << std::endl;
+    // }
     std::cout << "------" << std::endl;
     auto iqb = dunedaq::influxopmon::InsertQueryListBuilder(j);
 

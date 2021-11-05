@@ -17,7 +17,7 @@ namespace influxopmon {
 struct InsertQuery {
   std::string type;
   std::string source_id;
-  std::string partition;
+  std::map<std::string, std::string> tags;
   std::map<std::string, std::string> fields;
   uint64_t time;
 };
@@ -34,7 +34,7 @@ class InsertQueryListBuilder {
  private:
   void parse_json_obj(std::string path, const nlohmann::json& j);
 
-  std::string m_partition;
+  std::map<std::string, std::string> m_tags;
   std::vector<InsertQuery> m_queries;
 };
 
@@ -43,10 +43,13 @@ std::ostream& operator<<(std::ostream& os,
                          const dunedaq::influxopmon::InsertQuery& iq) {
   os << iq.type
     << ","
-    << "source_id=" << iq.source_id
-    << ","
-    << "partition_id=" << iq.partition
-    << " ";
+    << "source_id=" << iq.source_id;
+
+  for (auto it = iq.tags.begin(); it != iq.tags.end(); ++it) {
+    os << "," 
+      << it->first+"="+it->second;
+  }
+  os  << " ";
 
   if ( iq.fields.size() ) {
     auto it = iq.fields.begin();
@@ -56,8 +59,7 @@ std::ostream& operator<<(std::ostream& os,
       os << "," 
         << it->first+"="+it->second;
     }
-
-  os << " ";
+    os << " ";
   }
 
   os << (iq.time*1000000000); // from sec to ns

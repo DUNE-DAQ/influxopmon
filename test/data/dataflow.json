@@ -1,6 +1,6 @@
 {
   "__parent": {
-    "ale_test_dataflow": {
+    "ale_test.dataflow": {
       "__children": {
         "data_fragments_q": {
           "__properties": {
@@ -9,7 +9,7 @@
                 "capacity": 1000,
                 "number_of_elements": 0
               },
-              "__time": 1635923753
+              "__time": 1636125458
             }
           }
         },
@@ -20,7 +20,7 @@
                 "capacity": 100,
                 "number_of_elements": 0
               },
-              "__time": 1635923753
+              "__time": 1636125458
             }
           }
         },
@@ -31,7 +31,7 @@
                 "capacity": 100,
                 "number_of_elements": 0
               },
-              "__time": 1635923753
+              "__time": 1636125458
             }
           }
         },
@@ -39,13 +39,13 @@
           "__properties": {
             "dunedaq.dfmodules.datawriterinfo.Info": {
               "__data": {
-                "bytes_output": 968864,
+                "bytes_output": 2086784,
                 "new_records_received": 10,
                 "new_records_written": 10,
-                "records_received": 13,
-                "records_written": 13
+                "records_received": 28,
+                "records_written": 28
               },
-              "__time": 1635923753
+              "__time": 1636125458
             }
           }
         },
@@ -54,10 +54,10 @@
             "dunedaq.nwqueueadapters.networktoqueueinfo.Info": {
               "__data": {
                 "push_failed_count": 0,
-                "pushed_count": 26,
-                "received_count": 26
+                "pushed_count": 56,
+                "received_count": 56
               },
-              "__time": 1635923753
+              "__time": 1636125458
             }
           }
         },
@@ -66,10 +66,10 @@
             "dunedaq.nwqueueadapters.networktoqueueinfo.Info": {
               "__data": {
                 "push_failed_count": 0,
-                "pushed_count": 13,
-                "received_count": 13
+                "pushed_count": 28,
+                "received_count": 28
               },
-              "__time": 1635923753
+              "__time": 1636125458
             }
           }
         },
@@ -77,11 +77,11 @@
           "__properties": {
             "dunedaq.nwqueueadapters.queuetonetworkinfo.Info": {
               "__data": {
-                "popped_count": 13,
+                "popped_count": 28,
                 "send_failed_count": 0,
-                "sent_count": 13
+                "sent_count": 28
               },
-              "__time": 1635923753
+              "__time": 1636125458
             }
           }
         },
@@ -89,11 +89,11 @@
           "__properties": {
             "dunedaq.nwqueueadapters.queuetonetworkinfo.Info": {
               "__data": {
-                "popped_count": 13,
+                "popped_count": 28,
                 "send_failed_count": 0,
-                "sent_count": 13
+                "sent_count": 28
               },
-              "__time": 1635923753
+              "__time": 1636125458
             }
           }
         },
@@ -101,11 +101,11 @@
           "__properties": {
             "dunedaq.nwqueueadapters.queuetonetworkinfo.Info": {
               "__data": {
-                "popped_count": 13,
+                "popped_count": 28,
                 "send_failed_count": 0,
-                "sent_count": 13
+                "sent_count": 28
               },
-              "__time": 1635923753
+              "__time": 1636125458
             }
           }
         },
@@ -116,7 +116,7 @@
                 "capacity": 100,
                 "number_of_elements": 0
               },
-              "__time": 1635923753
+              "__time": 1636125458
             }
           }
         },
@@ -130,19 +130,19 @@
                 "average_millisecond_per_trigger": 33.0,
                 "duplicated_trigger_ids": 0,
                 "fragments_in_the_book": 0,
-                "generated_trigger_records": 13,
+                "generated_trigger_records": 28,
                 "invalid_requests": 0,
                 "loop_counter": 30,
                 "lost_fragments": 0,
                 "pending_fragments": 0,
                 "pending_trigger_decisions": 0,
-                "received_trigger_decisions": 13,
-                "sleep_counter": 303,
+                "received_trigger_decisions": 28,
+                "sleep_counter": 302,
                 "timed_out_trigger_records": 0,
                 "unexpected_fragments": 0,
                 "unexpected_trigger_decisions": 0
               },
-              "__time": 1635923753
+              "__time": 1636125458
             }
           }
         },
@@ -153,7 +153,7 @@
                 "capacity": 100,
                 "number_of_elements": 0
               },
-              "__time": 1635923753
+              "__time": 1636125458
             }
           }
         },
@@ -164,7 +164,7 @@
                 "capacity": 100,
                 "number_of_elements": 0
               },
-              "__time": 1635923753
+              "__time": 1636125458
             }
           }
         }
@@ -176,17 +176,20 @@
             "error": false,
             "state": "RUNNING"
           },
-          "__time": 1635923753
+          "__time": 1636125458
         },
         "dunedaq.rcif.runinfo.Info": {
           "__data": {
             "running": true,
-            "runno": 222,
-            "runtime": 13
+            "runno": 111,
+            "runtime": 28
           },
-          "__time": 1635923753
+          "__time": 1636125458
         }
       }
     }
+  },
+  "__tags": {
+    "partition_id": "ale_test"
   }
 }

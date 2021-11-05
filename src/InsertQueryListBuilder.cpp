@@ -17,14 +17,18 @@ InsertQueryListBuilder::InsertQueryListBuilder( const json& j ) {
 
     std::vector<InsertQuery> queries;
     // Expect only 1 key '__parent'
-    if ( j.size() != 1 or j.count(JSONTags::parent) != 1 ) {
+    if ( j.size() != 2 or j.count(JSONTags::parent) != 1 or j.count(JSONTags::tags) != 1 ) {
         throw OpmonJSONValidationError(ERS_HERE, "Root key '"+std::string(JSONTags::parent)+"' not found" );
     }
 
     if ( j[JSONTags::parent].size() != 1) {
         throw OpmonJSONValidationError(ERS_HERE, "Expected 1 top-level entry, found " + std::to_string(j[JSONTags::parent].size()) );
     }
-    m_partition = j[JSONTags::parent].begin().key();
+
+    // even easier with structured bindings (C++17)
+    for (auto& [key, value] : j[JSONTags::tags].items()) {
+      m_tags[key] = value;
+    }
 
     this->parse_json_obj("", j[JSONTags::parent]);
 
@@ -60,7 +64,7 @@ void InsertQueryListBuilder::parse_json_obj(std::string path,
         InsertQuery iq;
         iq.type = pstruct.key();
         iq.source_id = objpath;
-        iq.partition = m_partition;
+        iq.tags = m_tags;
         iq.time = pstruct.value().at(JSONTags::time).get_to(iq.time);
         // Loop over propery objects
         for (auto& pobj : pstruct.value().at(JSONTags::data).items()) {
