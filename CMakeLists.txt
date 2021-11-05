@@ -21,7 +21,7 @@ daq_add_library(*.cpp LINK_LIBRARIES opmonlib::opmonlib)
 ##############################################################################
 # Plugins
 
-daq_add_plugin(influxOpmonService duneOpmonService LINK_LIBRARIES opmonlib::opmonlib CURL::libcurl  ${CPR_LIBRARIES})
+daq_add_plugin(influxOpmonService duneOpmonService LINK_LIBRARIES influxopmon CURL::libcurl  ${CPR_LIBRARIES})
 target_include_directories(${PROJECT_NAME}_influxOpmonService_duneOpmonService PUBLIC ${CPR_INCLUDE_DIRS})
 
 ##############################################################################
