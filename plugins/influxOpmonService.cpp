@@ -62,16 +62,6 @@ public:
 
   void publish(nlohmann::json j) override
   {
-    // influxopmon::JsonConverter m_json_converter;
-    // m_json_converter.set_inserts_vector(j);
-    // auto inserts = m_json_converter.get_inserts_vector();
-
-    // std::string query;
-    // for (const auto& insert : inserts) {
-    //   query = query + insert + "\n";
-    // }
-
-    // execute(m_host + ":" + m_port + m_path + "?db=" + m_dbname, query);
 
     InsertQueryListBuilder qbuilder(j);
 
@@ -91,8 +81,6 @@ private:
   void execute(const std::string& adress, const std::string& cmd)
   {
     cpr::Response response = cpr::Post(cpr::Url{ adress }, cpr::Body{ cmd });
-    // std::cout << adress << std::endl;
-    // std::cout << cmd << std::endl;
 
     if (response.status_code >= 400) {
       ers::error(cannot_post_to_DB(ERS_HERE, "Error [" + std::to_string(response.status_code) + "] making request"));
