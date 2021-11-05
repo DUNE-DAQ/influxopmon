@@ -24,7 +24,7 @@ struct InsertQuery {
 
 class InsertQueryListBuilder {
  public:
-  inline static constexpr char m_tag_tag[] = "source_id=";
+  inline static constexpr char m_source_id_tag[] = "source_id=";
   inline static constexpr char m_separator[] = ".";
 
   InsertQueryListBuilder(const nlohmann::json& j);
@@ -43,7 +43,7 @@ std::ostream& operator<<(std::ostream& os,
                          const dunedaq::influxopmon::InsertQuery& iq) {
   os << iq.type
     << ","
-    << "source_id=" << iq.source_id;
+    << InsertQueryListBuilder::m_source_id_tag << "=" << iq.source_id;
 
   for (auto it = iq.tags.begin(); it != iq.tags.end(); ++it) {
     os << "," 

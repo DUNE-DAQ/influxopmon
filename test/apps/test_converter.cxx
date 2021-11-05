@@ -1,9 +1,9 @@
 /**
  * @brief Using namespace for convenience
  */
-#include "JsonInfluxConverter.hpp"
 #include "InsertQueryListBuilder.hpp"
 
+#include <fstream>
 
 using json = nlohmann::json;
 
@@ -15,7 +15,7 @@ int main(int argc, char const *argv[])
         exit(-1);
     }
 
-    std::ifstream file(argv[1]);
+    std::ifstream file((argv[1]));
     json j = json::parse(file);
 
     std::cout << j << std::endl;
