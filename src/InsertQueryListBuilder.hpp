@@ -24,7 +24,7 @@ struct InsertQuery {
 
 class InsertQueryListBuilder {
  public:
-  inline static constexpr char m_source_id_tag[] = "source_id=";
+  inline static constexpr char m_source_id_tag[] = "source_id";
   inline static constexpr char m_separator[] = ".";
 
   InsertQueryListBuilder(const nlohmann::json& j);
