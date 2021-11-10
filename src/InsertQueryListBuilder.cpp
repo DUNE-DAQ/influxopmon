@@ -61,6 +61,18 @@ void InsertQueryListBuilder::parse_json_obj(std::string path,
                                                   JSONTags::time + " or " +
                                                   JSONTags::data + " tag");
 
+        // Check for presence of stubstructures
+        std::vector<std::string> sub_structs;
+        for (auto& pobj : pstruct.value().at(JSONTags::data).items()) {
+          if (pobj.value().is_object()) {
+            sub_structs.push_back(pobj.key());
+          } 
+        }
+        if (sub_structs.size()) {
+          throw OpmonJSONValidationError(ERS_HERE, pstruct.key() + " contains substructures"); 
+        }
+
+        // Build the insert query
         InsertQuery iq;
         iq.type = pstruct.key();
         iq.source_id = objpath;
