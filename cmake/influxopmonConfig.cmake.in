@@ -5,8 +5,9 @@ include(CMakeFindDependencyMacro)
 
 find_dependency(opmonlib)
 find_dependency(CPR)
-find_dependency(nlohmann_json REQUIRED )
-find_dependency(logging REQUIRED )
+find_dependency(CURL)
+find_dependency(nlohmann_json)
+find_dependency(logging)
 
 if (EXISTS ${CMAKE_SOURCE_DIR}/@PROJECT_NAME@)
 
