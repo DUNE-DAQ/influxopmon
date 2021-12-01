@@ -8,6 +8,7 @@ find_dependency(CPR)
 find_dependency(CURL)
 find_dependency(nlohmann_json)
 find_dependency(logging)
+find_dependency(ers)
 
 if (EXISTS ${CMAKE_SOURCE_DIR}/@PROJECT_NAME@)
 
