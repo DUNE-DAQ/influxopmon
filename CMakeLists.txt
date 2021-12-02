@@ -8,7 +8,7 @@ daq_setup_environment()
 find_package(opmonlib REQUIRED)
 find_package(CPR)
 find_package(CURL)
-
+find_package(ers)
 find_package(nlohmann_json REQUIRED )
 find_package(logging REQUIRED )
 
