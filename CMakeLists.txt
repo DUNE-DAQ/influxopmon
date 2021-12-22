@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(influxopmon VERSION 1.5.2)
+project(influxopmon VERSION 1.5.3)
 
 find_package(daq-cmake REQUIRED)
 
@@ -8,7 +8,7 @@ daq_setup_environment()
 find_package(opmonlib REQUIRED)
 find_package(CPR)
 find_package(CURL)
-
+find_package(ers)
 find_package(nlohmann_json REQUIRED )
 find_package(logging REQUIRED )
 
