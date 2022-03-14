@@ -11,12 +11,12 @@ The library should be used calling the library's "publish" function with as argu
 The library output is the return statement from the CPR message and, if successfull, the insertion of the JSON content to the TSDB.
 
 ### URI example :
-the influxopmon URI presents as such: `influx://188.185.88.195:80/write?db=db1`
+the influxopmon URI presents as such: `influx://opmondb.cern.ch:31002/write?db=influxdb`
 
 Translating in the full, following URI eyample:
 
 ```
-daq_application -c rest://localhost:12345 --name yourchoosenname -i influx://188.185.88.195:80/write?db=db1 
+daq_application -c rest://localhost:12345 --name yourchoosenname -i influx://opmondb.cern.ch:31002/write?db=influxdb 
 ```
 
 ### Step-by-step :
@@ -60,22 +60,6 @@ Converts a flattened json into a vector of inserts according to a delimiter pass
 Influxopmon changes, if necessary, UNIX EPOCH time format to UNIX EPOCH time format in nanoseconds, to adapt to influx db the format put in parameter.
 ##### `private check_data_type`
 Puts the correct influx parameter delimiter according to the data type of an entry, for example using ' " ' for string delimitation.
-
-### Authentication
-For security and information disclosure reasons, influxopmon, does not handle database authentication. The authentication is instead handled by an nginx instance is installed on a CERN openstack centos7 server.
-
-#### Configuration
-the redirection is handled at the server's / as following.
-```
-location / {
-	proxy_pass https://dbod-testinfluxyd.cern.ch:8095/write;
-	proxy_set_header Authorization "Token username:password";
-}
-```
-#### Logs
-Nginx redirection logs is available at 188.185.88.195/var/log/nginx/access.log 
-
-Access to the server can be requested in necessary to Yann Donon (yann.donon@cern.ch).
 
 ## Notes :
 The database is queried using [CPR](https://github.com/whoshuu/cpr "CPR"), which is a [libcurl](https://curl.se/libcurl/ "libcurl") wrapper.
